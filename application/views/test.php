@@ -119,6 +119,13 @@
                 <textarea id="output-text" rows="15" 
                           class="w-full p-4 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm" 
                           placeholder="Extracted text will appear here..." readonly></textarea>
+
+                          <h2 class="text-xl font-semibold text-gray-700 mb-2 mt-6">3. Cleaned & Structured Summary:</h2>
+<textarea id="cleaned-text" rows="12"
+          class="w-full p-4 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm"
+          placeholder="Gemini cleaned summary will appear here..."
+          readonly></textarea>
+
                 
                 <div class="mt-4 flex flex-wrap gap-4 justify-center">
                     <button id="copy-text" class="btn btn-secondary">Copy to Clipboard</button>
@@ -250,9 +257,28 @@
             const base64ImageData = imageDataUrl.split(',')[1]; // Strip the data URL prefix
 
             // 2. Set up API call
-            const apiKey = ""; // Per instructions, leave empty. Canvas will handle it.
+            const apiKey = "AIzaSyCwCYYWZqtip3KvsW6FV37lwbiYU64FS28"; // Per instructions, leave empty. Canvas will handle it.
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const prompt = "Extract all text from this image. Preserve line breaks and formatting as accurately as possible.";
+            const prompt = `
+            Extract all text from this image.
+
+            THEN produce a second output called "CLEAN SUMMARY" in a human-readable format.
+
+            Follow EXACTLY this structure:
+
+            PARTS:
+            PHASE:
+            FLUID:
+            TYPE:
+            SPECIFICATION:
+            GRADE:
+            OPERATING TEMPERATURE:
+            OPERATING PRESSURE:
+            DESIGN TEMPERATURE:
+            DESIGN PRESSURE:
+
+            If a value cannot be identified, leave it blank.
+            `;
 
             const payload = {
                 contents: [{
@@ -332,12 +358,27 @@
                 const result = await response.json();
                 const candidate = result.candidates?.[0];
                 const text = candidate?.content?.parts?.[0]?.text;
-
                 if (text) {
                     updateStatus('OCR complete!', 'success');
+
+                    // 1. Put RAW OCR text into first textbox
                     outputText.value = text;
+
+                    // 2. Extract the 'CLEAN SUMMARY' section if it exists
+                    let cleaned = "";
+                    const cleanIndex = text.indexOf("CLEAN SUMMARY");
+                    if (cleanIndex !== -1) {
+                        cleaned = text.substring(cleanIndex + "CLEAN SUMMARY".length).trim();
+                    } else {
+                        cleaned = "No clean summary returned by Gemini.";
+                    }
+
+                    document.getElementById("cleaned-text").value = cleaned;
+
                     outputSection.classList.remove('hidden');
-                } else {
+                }
+
+                else {
                     console.error('Unexpected API response structure:', result);
                     // Check for safety ratings blocking
                     if (candidate && candidate.finishReason !== 'STOP') {
@@ -431,6 +472,169 @@
                 alert('Failed to copy text. Please copy manually.');
             }
         }
+
+
+        // --- Helper: Translate / Format OCR Text ---
+async function translateTextWithGemini(rawText) {
+    updateStatus('Formatting text for readability via Gemini...', 'info');
+
+    const apiKey = ""; // replace with your API key
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+const prompt = `
+Extract all text from this image. Then analyze the extracted data and produce a single JSON object strictly following this schema:
+
+{
+  "PARTS": "",
+  "PHASE": "",
+  "FLUID": "",
+  "TYPE": {
+    "category1": { "Top Head": "", "Shell": "", "Bottom Head": "" },
+    "category2": { "Head": "", "Shell": "" },
+    "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" },
+    "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" }
+  },
+  "SPECIFICATION": {
+    "category1": { "Top Head": "", "Shell": "", "Bottom Head": "" },
+    "category2": { "Head": "", "Shell": "" },
+    "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" },
+    "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" }
+  },
+  "GRADE": {
+    "category1": { "Top Head": "", "Shell": "", "Bottom Head": "" },
+    "category2": { "Head": "", "Shell": "" },
+    "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" },
+    "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" }
+  },
+  "INSULATION": {
+    "category1": { "Top Head": "", "Shell": "", "Bottom Head": "" },
+    "category2": { "Head": "", "Shell": "" },
+    "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" },
+    "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" }
+  },
+  "DESIGN_TEMPERATURE_C": {
+    "category1": { "Top Head": "", "Shell": "", "Bottom Head": "" },
+    "category2": { "Head": "", "Shell": "" },
+    "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" },
+    "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" }
+  },
+  "DESIGN_PRESSURE_MPa": {
+    "category1": { "Top Head": "", "Shell": "", "Bottom Head": "" },
+    "category2": { "Head": "", "Shell": "" },
+    "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" },
+    "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" }
+  },
+  "OPERATING_TEMPERATURE_C": {
+    "category1": { "Top Head": "", "Shell": "", "Bottom Head": "" },
+    "category2": { "Head": "", "Shell": "" },
+    "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" },
+    "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" }
+  },
+  "OPERATING_PRESSURE_MPa": {
+    "category1": { "Top Head": "", "Shell": "", "Bottom Head": "" },
+    "category2": { "Head": "", "Shell": "" },
+    "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" },
+    "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" }
+  }
+}
+
+=========================
+CATEGORY DETECTION RULES
+=========================
+- Category 1 → pressure vessel with Top Head, Shell, Bottom Head
+- Category 2 → vessel with Head + Shell
+- Category 3 → heat exchanger with Top Channel, Shell, Bottom Channel
+- Category 4 → heat exchanger with Channel, Shell, Tube Bundle
+Fill ONLY the matching category; leave all others as empty strings.
+
+=========================
+MATERIAL NORMALIZATION RULES
+=========================
+- Map extracted materials to TYPE, SPEC, and GRADE as follows:
+
+| Extracted Material       | TYPE            | SPEC   | GRADE |
+|--------------------------|----------------|--------|-------|
+| ASTM A516 Gr70           | Carbon Steel   | SA-516 | 70    |
+| ASTM A36                 | Carbon Steel   | A36    | ""    |
+| ASTM A240 304L           | Stainless Steel| A240   | 304L  |
+| ASTM A312 TP304L         | Stainless Steel| A312   | 304L  |
+| ASTM A182 F304L          | Stainless Steel| A182   | 304L  |
+
+- If multiple materials appear, assign each correctly to the corresponding part (Top Head, Shell, Bottom Head, etc.).
+
+=========================
+INSULATION RULE
+=========================
+- If insulation text appears → "Yes"
+- If text is "bare", "none", or not found → "No"
+
+=========================
+TEMPERATURE & PRESSURE RULES
+=========================
+- Convert all temperatures to numeric °C
+- Convert all pressures to MPa:
+  • bar(g) → MPa = bar(g) / 10  
+  • psi → MPa = psi × 0.00689476
+- Working temperature/pressure = Operating temperature/pressure
+
+=========================
+OUTPUT RULES
+=========================
+- Output ONLY the JSON object
+- No explanations, comments, or extra text
+- Leave empty strings if a value is missing
+- Ensure the JSON strictly matches the schema above
+
+=========================
+EXAMPLE OUTPUT
+=========================
+{
+  "PARTS": "Hot Water Vessel",
+  "PHASE": "Liquid",
+  "FLUID": "Hot Water",
+  "TYPE": { "category1": { "Top Head": "Carbon Steel", "Shell": "Carbon Steel", "Bottom Head": "Carbon Steel" }, "category2": { "Head": "", "Shell": "" }, "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" }, "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" } },
+  "SPECIFICATION": { "category1": { "Top Head": "SA-516", "Shell": "SA-516", "Bottom Head": "SA-516" }, "category2": { "Head": "", "Shell": "" }, "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" }, "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" } },
+  "GRADE": { "category1": { "Top Head": "70", "Shell": "70", "Bottom Head": "70" }, "category2": { "Head": "", "Shell": "" }, "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" }, "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" } },
+  "INSULATION": { "category1": { "Top Head": "Yes", "Shell": "Yes", "Bottom Head": "Yes" }, "category2": { "Head": "", "Shell": "" }, "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" }, "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" } },
+  "DESIGN_TEMPERATURE_C": { "category1": { "Top Head": 100, "Shell": 100, "Bottom Head": 100 }, "category2": { "Head": "", "Shell": "" }, "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" }, "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" } },
+  "DESIGN_PRESSURE_MPa": { "category1": { "Top Head": 4.0, "Shell": 4.0, "Bottom Head": 4.0 }, "category2": { "Head": "", "Shell": "" }, "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" }, "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" } },
+  "OPERATING_TEMPERATURE_C": { "category1": { "Top Head": 50, "Shell": 50, "Bottom Head": 50 }, "category2": { "Head": "", "Shell": "" }, "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" }, "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" } },
+  "OPERATING_PRESSURE_MPa": { "category1": { "Top Head": 3.6, "Shell": 3.6, "Bottom Head": 3.6 }, "category2": { "Head": "", "Shell": "" }, "category3": { "Top Channel": "", "Shell": "", "Bottom Channel": "" }, "category4": { "Channel": "", "Shell": "", "Tube Bundle": "" } }
+}
+`;
+
+
+
+
+    const payload = {
+        contents: [{ text: prompt }]
+    };
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error?.message || 'Gemini API error');
+        }
+
+        const result = await response.json();
+        const candidate = result.candidates?.[0];
+        const formattedText = candidate?.content?.[0]?.text || rawText;
+
+        return formattedText;
+
+    } catch (err) {
+        console.error('Gemini formatting error:', err);
+        updateStatus('Failed to format text. Showing raw OCR output.', 'error');
+        return rawText;
+    }
+}
+
 
         function showCopySuccess() {
             copySuccessMsg.classList.remove('hidden');
