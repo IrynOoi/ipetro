@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPETRO - Equipment Manager</title>
+
+    <!-- External Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ================================================
+           DESIGN SYSTEM - COLOR VARIABLES
+           ================================================ */
+        :root {
+            /* Brand Colors */
+            --color-primary: #DC2626;
+            --color-primary-dark: #B91C1C;
+            --color-primary-light: #FEE2E2;
+            --color-primary-glow: rgba(220, 38, 38, 0.15);
+
+            /* Neutral Palette */
+            --color-slate-50: #F8FAFC;
+            --color-slate-100: #F1F5F9;
+            --color-slate-200: #E2E8F0;
+            --color-slate-300: #CBD5E1;
+            --color-slate-400: #94A3B8;
+            --color-slate-500: #64748B;
+            --color-slate-600: #475569;
+            --color-slate-700: #334155;
+            --color-slate-800: #1E293B;
+            --color-slate-900: #0F172A;
+
+            /* Semantic Colors */
+            --color-success: #10B981;
+            --color-success-light: #D1FAE5;
+            --color-warning: #F59E0B;
+            --color-info: #3B82F6;
+            --color-info-light: #DBEAFE;
+
+            /* iPETRO Legacy */
+            --ipetro-red: #DC2626;
+
+            /* Spacing Scale */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 20px var(--color-primary-glow);
+
+            /* Transitions */
+            --transition-base: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ================================================
+           DESIGN SYSTEM - BASE STYLES
+           ================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--color-slate-50) 0%, var(--color-slate-100) 100%);
+            color: var(--color-slate-900);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
+
+        /* ================================================
+           SWEETALERT FIX - Prevents page shrinking
+           ================================================ */
+        body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
+            overflow: hidden !important;
+            padding-right: 0 !important;
+        }
+
+        .swal2-container {
+            padding-right: 0 !important;
+        }
+
+        body.swal2-height-auto {
+            height: 100% !important;
+        }
+
+        /* ================================================
+           CUSTOM SCROLLBAR
+           ================================================ */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--color-slate-100);
+            border-radius: var(--radius-sm);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-slate-300);
+            border-radius: var(--radius-sm);
+            transition: background var(--transition-base);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-slate-400);
+        }
+
+        /* ================================================
+           SIDEBAR DESIGN
+           ================================================ */
+        #sidebar {
+            transition: all var(--transition-smooth);
+            background: linear-gradient(180deg, var(--color-slate-900) 0%, var(--color-slate-800) 100%);
+            box-shadow: var(--shadow-xl);
+            position: relative;
+        }
+
+        #sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(180deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.1) 20%,
+                    rgba(255, 255, 255, 0.1) 80%,
+                    transparent 100%);
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--color-slate-400);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            margin: 0.25rem 0.75rem;
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--color-primary);
+            transform: scaleY(0);
+            transition: transform var(--transition-smooth);
+        }
+
+        .sidebar-link:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--color-slate-200);
+            transform: translateX(4px);
+        }
+
+        .sidebar-link.active {
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4), var(--shadow-glow);
+            font-weight: 600;
+        }
+
+        .sidebar-link.active::before {
+            transform: scaleY(1);
+        }
+
+        #sidebar.collapsed {
+            width: 80px;
+        }
+
+        #sidebar.collapsed .sidebar-text,
+        #sidebar.collapsed .sidebar-section-title,
+        #sidebar.collapsed .user-info-text,
+        #sidebar.collapsed .logo-text {
+            display: none;
+        }
+
+        #sidebar.collapsed .sidebar-link {
+            justify-content: center;
+            padding: 12px 0;
+            margin: 4px 8px;
+        }
+
+        /* ================================================
+           BADGE COMPONENTS
+           ================================================ */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.688rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-success {
+            background: var(--color-success-light);
+            color: var(--color-success);
+            border: 1px solid var(--color-success);
+        }
+
+        .badge-info {
+            background: var(--color-info-light);
+            color: var(--color-info);
+            border: 1px solid var(--color-info);
+        }
+
+        /* ================================================
+           BUTTON COMPONENTS
+           ================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-decoration: none;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--color-slate-700);
+            border: 1px solid var(--color-slate-300);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-slate-50);
+            border-color: var(--color-slate-400);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ================================================
+           HEADER ENHANCEMENTS
+           ================================================ */
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--color-slate-200);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ================================================
+           MOBILE RESPONSIVE
+           ================================================ */
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                z-index: 50;
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            #sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            #mobile-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 23, 42, 0.7);
+                backdrop-filter: blur(4px);
+                z-index: 40;
+            }
+
+            #mobile-overlay.active {
+                display: block;
+            }
+        }
+
+        /* ================================================
+           MODAL TRANSITIONS
+           ================================================ */
+        .modal {
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .modal-container {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        .modal-active .modal-container {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        body.modal-active {
+            overflow: hidden;
+        }
+
+        /* ================================================
+           FILE UPLOAD STYLING
+           ================================================ */
+        .file-upload-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            border: 2px dashed var(--color-slate-300);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--color-slate-50);
+            transition: all var(--transition-base);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .file-upload-wrapper:hover {
+            border-color: var(--color-primary);
+            background-color: var(--color-primary-light);
+        }
+
+        .file-upload-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-preview {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+
+<body class="h-screen flex overflow-hidden bg-gray-100">
+
+    <!-- Mobile Overlay -->
+    <div id="mobile-overlay"></div>
+
+    <!-- Mobile Toggle Button -->
+    <button id="toggle-sidebar-btn"
+        class="md:hidden fixed top-4 left-4 z-50 bg-slate-900 text-white p-3 rounded-xl shadow-xl hover:bg-slate-800 transition-all">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- ================================================
+         SIDEBAR NAVIGATION
+         ================================================ -->
+    <aside id="sidebar" class="text-white flex flex-col h-full shrink-0 w-64">
+
+        <!-- Logo Section -->
+        <div class="h-20 flex items-center px-6 shrink-0 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <svg width="40" height="40" viewBox="0 0 100 100" fill="none" class="shrink-0 drop-shadow-xl">
+                        <defs>
+                            <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#DC2626;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#B91C1C;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M50 10 L85 30 L85 70 L50 90 L50 10 Z" fill="url(#logo-gradient)" />
+                        <path d="M50 10 L15 30 L15 70 L50 90 L50 10 Z" fill="#475569" opacity="0.8" />
+                        <path d="M50 10 L85 30 L50 50 L15 30 L50 10 Z" fill="#EF4444" />
+                    </svg>
+                    <div class="absolute inset-0 blur-xl opacity-50 bg-red-500"></div>
+                </div>
+                <div class="logo-text flex flex-col">
+                    <span class="font-bold text-xl tracking-tight text-white leading-tight">iPETRO</span>
+                    <span class="text-[10px] font-bold text-red-400 tracking-widest uppercase">RBIMS Core</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="flex-1 overflow-y-auto py-6">
+            <nav class="flex flex-col gap-1">
+                <div
+                    class="sidebar-section-title px-6 mb-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    Workspace
+                </div>
+
+                <a href="test.html" class="sidebar-link group" data-page="test">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    <span class="sidebar-text font-medium text-sm ml-3">Inspection Log</span>
+                </a>
+
+                <a href="equipment.html" class="sidebar-link group active" data-page="equipment">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                        </path>
+                    </svg>
+                    <span class="sidebar-text font-medium text-sm ml-3">Equipment</span>
+                </a>
+
+                <a href="inspectionplan.html" class="sidebar-link group" data-page="inspectionplan">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                        </path>
+                    </svg>
+                    <span class="sidebar-text font-medium text-sm ml-3">Plans</span>
+                </a>
+
+                <div id="admin-section" class="sidebar-section-title px-6 mb-3 mt-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden">
+                    Administration
+                </div>
+                <a href="users.html" id="users-link" class="sidebar-link group hidden" data-page="users">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <span class="sidebar-text font-medium text-sm ml-3">Users</span>
+                </a>
+
+                <div class="sidebar-section-title px-6 mb-3 mt-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    Account
+                </div>
+                <a href="profile.html" class="sidebar-link group" data-page="profile">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <span class="sidebar-text font-medium text-sm ml-3">My Profile</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- User Profile Section -->
+        <div class="p-4 bg-slate-900/50 border-t border-white/10 shrink-0">
+            <div class="flex items-center gap-3 p-3 rounded-xl mb-3 bg-white/5">
+                <div
+                    class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-sm font-bold text-white shadow-lg shrink-0 ring-2 ring-red-400/30">
+                    --
+                </div>
+                <div class="user-info-text overflow-hidden flex-1">
+                    <div class="text-sm font-semibold text-white truncate">Loading...</div>
+                    <div class="text-[11px] text-emerald-400 flex items-center gap-2 font-medium mt-0.5">
+                        <span class="relative flex h-2 w-2">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        System Online
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="logout()" class="btn btn-primary w-full shadow-lg">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
+                </svg>
+                <span class="sidebar-text relative z-10">Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ================================================
+         MAIN CONTENT AREA
+         ================================================ -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden relative">
+
+        <!-- Header -->
+        <header class="header h-20 flex items-center justify-between px-8 shrink-0 z-30">
+            <div class="flex items-center gap-4">
+                <button id="desktop-toggle-btn" onclick="document.getElementById('toggle-sidebar-btn').click()"
+                    class="hidden md:flex text-slate-400 hover:text-slate-700 transition-all p-2 rounded-lg hover:bg-slate-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h7"></path>
+                    </svg>
+                </button>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900 tracking-tight">Equipment Manager</h1>
+                    <p class="text-xs text-slate-500 mt-0.5">Asset Database</p>
+                </div>
+            </div>
+
+            <div class="flex gap-3 items-center">
+                <div id="system-status" class="hidden md:flex badge badge-success shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    <span>System Ready</span>
+                </div>
+                <div class="h-8 w-px bg-slate-200 mx-1"></div>
+                <button onclick="openModal('add')" class="btn btn-primary shadow-md hover:shadow-lg">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span class="relative z-10">New Equipment</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto p-6">
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-full">
+                <div class="overflow-auto flex-1">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50 sticky top-0 z-10">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    Equipment No</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    PMT No</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    Description</th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    Design Code</th>
+                                <th
+                                    class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    Parts</th>
+                                <th
+                                    class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-widest">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="equip-list" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="6" class="px-6 py-12 text-center text-gray-400">Loading database...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ================================================
+         MODAL
+         ================================================ -->
+    <div id="modal" class="modal opacity-0 pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"
+            onclick="closeModal()"></div>
+        <div
+            class="modal-container bg-white w-full max-w-lg rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col max-h-[90vh]">
+
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 class="text-lg font-bold text-gray-800" id="modal-title">Add Equipment</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6 overflow-y-auto">
+                <form id="equip-form" class="space-y-4">
+                    <input type="hidden" id="equip-id">
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Equipment No</label>
+                            <input
+                                class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-shadow"
+                                id="eq-no" type="text" placeholder="e.g. V-101" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">PMT No</label>
+                            <input
+                                class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-shadow"
+                                id="pmt-no" type="text" placeholder="e.g. PMT-55" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Description</label>
+                        <input
+                            class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-shadow"
+                            id="desc" type="text" placeholder="e.g. High Pressure Separator" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Design Code</label>
+                        <input
+                            class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-shadow"
+                            id="design-code" type="text" placeholder="e.g. ASME VIII">
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Equipment Diagram</label>
+                        <div class="file-upload-wrapper" id="drop-zone">
+                            <input type="file" id="image-upload"
+                                accept="image/png, image/jpeg, image/jpg, image/svg+xml" class="file-upload-input">
+                            <div id="upload-content" class="text-center pointer-events-none">
+                                <svg class="mx-auto h-8 w-8 text-gray-400 mb-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                <p class="text-xs text-gray-500">Click to upload or drag & drop</p>
+                                <p class="text-[10px] text-gray-400 mt-1">PNG, JPG, SVG up to 5MB</p>
+                            </div>
+                            <img id="image-preview" class="file-upload-preview hidden" alt="Preview">
+                        </div>
+                    </div>
+
+                    <!-- Parts Section -->
+                    <div id="parts-section" class="pt-2 border-t border-gray-100 mt-4">
+                        <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Initial Parts List</label>
+                        <div id="parts-container" class="space-y-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+                            <input type="text" name="parts"
+                                class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                                placeholder="Part Name">
+                        </div>
+                        <button type="button" onclick="addPartField()"
+                            class="mt-2 text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Add Another Part
+                        </button>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="pt-4 flex justify-end gap-3">
+                        <button type="button" onclick="closeModal()"
+                            class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" id="submit-btn"
+                            class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-md transition-all">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================
+         JAVASCRIPT APPLICATION LOGIC
+         ================================================ -->
+    <script>
+        // ================================================
+        // GLOBAL CONFIGURATION
+        // ================================================
+        const CONFIG = {
+            SWAL_OPTIONS: {
+                heightAuto: false,
+                backdrop: true,
+                allowOutsideClick: true
+            }
+        };
+
+        // ================================================
+        // SIDEBAR MODULE
+        // ================================================
+        const SidebarModule = (function () {
+            function init() {
+                const sidebar = document.getElementById('sidebar');
+                const toggleBtn = document.getElementById('toggle-sidebar-btn');
+                const mobileOverlay = document.getElementById('mobile-overlay');
+
+                // Set active page
+                document.querySelectorAll('.sidebar-link[data-page="equipment"]').forEach(link => {
+                    link.classList.add('active');
+                });
+
+                function toggleSidebar() {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.toggle('mobile-open');
+                        mobileOverlay.classList.toggle('active');
+                    } else {
+                        sidebar.classList.toggle('collapsed');
+                        document.body.classList.toggle('sidebar-collapsed');
+                        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+                    }
+                }
+
+                toggleBtn.addEventListener('click', toggleSidebar);
+                mobileOverlay.addEventListener('click', toggleSidebar);
+
+                if (window.innerWidth > 768 && localStorage.getItem('sidebarCollapsed') === 'true') {
+                    sidebar.classList.add('collapsed');
+                    document.body.classList.add('sidebar-collapsed');
+                }
+            }
+
+            return {
+                init: init
+            };
+        })();
+
+        // ================================================
+        // AUTHENTICATION MODULE
+        // ================================================
+        const AuthModule = (function () {
+            let currentUser = null;
+
+            async function initAuth() {
+                try {
+                    const res = await fetch('/auth/me', {
+                        credentials: 'include'
+                    });
+
+                    const data = await res.json();
+
+                    if (data.isAuthenticated && data.user) {
+                        currentUser = data.user;
+                        updateUserUI();
+                    } else {
+                        console.log('Not authenticated - server will handle redirect');
+                    }
+                } catch (error) {
+                    console.error('Auth check error:', error);
+                }
+            }
+
+            function updateUserUI() {
+                if (!currentUser) return;
+
+                const userInitials = document.querySelector('.w-10.h-10.rounded-full');
+                if (userInitials) {
+                    userInitials.textContent = currentUser.username.substring(0, 2).toUpperCase();
+                }
+
+                const userNameElement = document.querySelector('.user-info-text .text-sm');
+                if (userNameElement) {
+                    userNameElement.textContent = currentUser.username;
+                }
+
+                // Show admin section for admin users
+                if (currentUser.role === 'admin') {
+                    const adminSection = document.getElementById('admin-section');
+                    const usersLink = document.getElementById('users-link');
+                    if (adminSection) adminSection.classList.remove('hidden');
+                    if (usersLink) usersLink.classList.remove('hidden');
+                } else {
+                    const deleteButtons = document.querySelectorAll('button[onclick*="deleteEquipment"]');
+                    deleteButtons.forEach(btn => {
+                        btn.style.display = 'none';
+                    });
+                }
+
+                console.log('User UI updated:', currentUser.username, '(' + currentUser.role + ')');
+            }
+
+            async function logout() {
+                const result = await Swal.fire({
+                    ...CONFIG.SWAL_OPTIONS,
+                    title: 'Logout?',
+                    text: "Are you sure you want to end your session?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#DC2626',
+                    cancelButtonColor: '#475569',
+                    confirmButtonText: 'Yes, logout',
+                    cancelButtonText: 'Cancel'
+                });
+
+                if (!result.isConfirmed) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/auth/logout', {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        window.location.href = data.redirect || '/';
+                    } else {
+                        Swal.fire({
+                            ...CONFIG.SWAL_OPTIONS,
+                            title: 'Logout Failed',
+                            text: 'Please try again.',
+                            icon: 'error',
+                            confirmButtonColor: '#DC2626'
+                        });
+                    }
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    Swal.fire({
+                        ...CONFIG.SWAL_OPTIONS,
+                        title: 'System Error',
+                        text: 'An error occurred during logout.',
+                        icon: 'error',
+                        confirmButtonColor: '#4B5563'
+                    });
+                }
+            }
+
+            function getCurrentUser() {
+                return currentUser;
+            }
+
+            return {
+                init: initAuth,
+                logout: logout,
+                getCurrentUser: getCurrentUser
+            };
+        })();
+
+        window.logout = AuthModule.logout;
+
+        // ================================================
+        // EQUIPMENT MODULE
+        // ================================================
+        const EquipmentModule = (function () {
+            let allEquipmentData = [];
+            const fileInput = document.getElementById('image-upload');
+            const preview = document.getElementById('image-preview');
+            const uploadContent = document.getElementById('upload-content');
+
+            function init() {
+                setupImageUpload();
+                setupFormSubmit();
+                loadEquipment();
+            }
+
+            function setupImageUpload() {
+                fileInput.addEventListener('change', function (e) {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            preview.src = e.target.result;
+                            preview.classList.remove('hidden');
+                            uploadContent.classList.add('hidden');
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            function resetUpload() {
+                fileInput.value = '';
+                preview.src = '';
+                preview.classList.add('hidden');
+                uploadContent.classList.remove('hidden');
+            }
+
+            async function loadEquipment() {
+                try {
+                    const res = await fetch('http://localhost:3000/api/equipment', {
+                        credentials: 'include'
+                    });
+                    const result = await res.json();
+                    const tbody = document.getElementById('equip-list');
+
+                    if (!result.success) throw new Error(result.error.message);
+
+                    allEquipmentData = result.data;
+
+                    if (allEquipmentData.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No equipment found in database.</td></tr>';
+                        return;
+                    }
+
+                    const countRes = await fetch('http://localhost:3000/api/equipment-list', {
+                        credentials: 'include'
+                    });
+                    const countData = (await countRes.json()).data || [];
+                    const partCounts = Object.fromEntries(countData.map(e => [e.equipment_id, e.parts_count]));
+
+                    tbody.innerHTML = allEquipmentData.map(e => `
+                        <tr class="hover:bg-gray-50 transition-colors group">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">${e.equipment_no}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 font-mono">${e.pmt_no}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600">${e.equipment_desc}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">${e.design_code || '<span class="text-gray-300">-</span>'}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 text-center">
+                                <span class="bg-gray-100 text-gray-600 py-1 px-3 rounded-full text-xs font-bold border border-gray-200">${partCounts[e.equipment_id] || 0}</span>
+                            </td>
+                            <td class="px-6 py-4 text-right text-sm font-medium">
+                                <button onclick="openModal('edit', ${e.equipment_id})" class="text-blue-600 hover:text-blue-800 mr-4 transition-colors">Edit</button>
+                                <button onclick="deleteEquipment('${e.equipment_id}')" class="text-red-600 hover:text-red-800 transition-colors">Delete</button>
+                            </td>
+                        </tr>`).join('');
+                } catch (err) {
+                    console.error(err);
+                    const tbody = document.getElementById('equip-list');
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Error loading data. Check console.</td></tr>';
+                }
+            }
+
+            async function deleteEquipment(id) {
+                const result = await Swal.fire({
+                    ...CONFIG.SWAL_OPTIONS,
+                    title: 'Delete Equipment?',
+                    text: "This will permanently delete the equipment and all its inspection history.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#DC2626',
+                    cancelButtonColor: '#475569',
+                    confirmButtonText: 'Yes, delete it',
+                    cancelButtonText: 'Cancel'
+                });
+
+                if (!result.isConfirmed) return;
+
+                try {
+                    const res = await fetch(`http://localhost:3000/api/delete-equipment/${id}`, {
+                        method: 'DELETE',
+                        credentials: 'include'
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        loadEquipment();
+                        Swal.fire({
+                            ...CONFIG.SWAL_OPTIONS,
+                            title: 'Deleted!',
+                            text: 'Equipment has been removed.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
+                        });
+                    } else {
+                        throw new Error(data.error.message);
+                    }
+                } catch (e) {
+                    Swal.fire({
+                        ...CONFIG.SWAL_OPTIONS,
+                        title: 'Delete Failed',
+                        text: e.message,
+                        icon: 'error',
+                        confirmButtonColor: '#DC2626'
+                    });
+                }
+            }
+
+            function setupFormSubmit() {
+                document.getElementById('equip-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const id = document.getElementById('equip-id').value;
+                    const submitBtn = document.getElementById('submit-btn');
+                    submitBtn.textContent = 'Saving...';
+                    submitBtn.disabled = true;
+
+                    const formData = new FormData();
+                    formData.append('equipment_no', document.getElementById('eq-no').value);
+                    formData.append('pmt_no', document.getElementById('pmt-no').value);
+                    formData.append('equipment_desc', document.getElementById('desc').value);
+                    formData.append('design_code', document.getElementById('design-code').value);
+
+                    if (fileInput.files[0]) {
+                        formData.append('image', fileInput.files[0]);
+                    }
+
+                    const parts = [];
+                    document.getElementsByName('parts').forEach(i => {
+                        if (i.value.trim()) parts.push(i.value);
+                    });
+                    formData.append('parts', JSON.stringify(parts));
+
+                    let url, method;
+                    if (ModalModule.getCurrentMode() === 'add') {
+                        url = 'http://localhost:3000/api/add-equipment';
+                        method = 'POST';
+                    } else {
+                        url = `http://localhost:3000/api/edit-equipment/${id}`;
+                        method = 'PUT';
+                    }
+
+                    try {
+                        const res = await fetch(url, {
+                            method: method,
+                            credentials: 'include',
+                            body: formData
+                        });
+
+                        const data = await res.json();
+
+                        if (data.success) {
+                            ModalModule.close();
+                            loadEquipment();
+
+                            Swal.fire({
+                                ...CONFIG.SWAL_OPTIONS,
+                                title: 'Success!',
+                                text: 'Equipment saved successfully.',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false,
+                                toast: true,
+                                position: 'top-end',
+                                background: '#D1FAE5',
+                                color: '#166534'
+                            });
+                        } else {
+                            throw new Error(data.error?.message || 'Unknown error');
+                        }
+                    } catch (err) {
+                        Swal.fire({
+                            ...CONFIG.SWAL_OPTIONS,
+                            title: 'Save Failed',
+                            text: err.message,
+                            icon: 'error',
+                            confirmButtonColor: '#DC2626'
+                        });
+                    } finally {
+                        submitBtn.textContent = 'Save Changes';
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
+
+            function getAllData() {
+                return allEquipmentData;
+            }
+
+            function getUtils() {
+                return {
+                    resetUpload: resetUpload
+                };
+            }
+
+            return {
+                init: init,
+                loadEquipment: loadEquipment,
+                deleteEquipment: deleteEquipment,
+                getAllData: getAllData,
+                getUtils: getUtils
+            };
+        })();
+
+        // ================================================
+        // MODAL MODULE
+        // ================================================
+        const ModalModule = (function () {
+            const modal = document.getElementById('modal');
+            const partsSection = document.getElementById('parts-section');
+            let currentMode = 'add';
+
+            function openModal(mode, id = null) {
+                currentMode = mode;
+                document.getElementById('equip-form').reset();
+                document.getElementById('equip-id').value = '';
+                EquipmentModule.getUtils().resetUpload();
+
+                if (mode === 'edit') {
+                    document.getElementById('modal-title').innerText = 'Edit Equipment';
+                    partsSection.classList.add('hidden');
+
+                    const equipment = EquipmentModule.getAllData().find(e => e.equipment_id == id);
+                    if (equipment) {
+                        document.getElementById('equip-id').value = equipment.equipment_id;
+                        document.getElementById('eq-no').value = equipment.equipment_no;
+                        document.getElementById('pmt-no').value = equipment.pmt_no;
+                        document.getElementById('desc').value = equipment.equipment_desc;
+                        document.getElementById('design-code').value = equipment.design_code || '';
+
+                        if (equipment.image_url) {
+                            const preview = document.getElementById('image-preview');
+                            const uploadContent = document.getElementById('upload-content');
+                            preview.src = equipment.image_url;
+                            preview.classList.remove('hidden');
+                            uploadContent.classList.add('hidden');
+                        }
+                    }
+                } else {
+                    document.getElementById('modal-title').innerText = 'Add New Equipment';
+                    partsSection.classList.remove('hidden');
+                    document.getElementById('parts-container').innerHTML = '<input type="text" name="parts" class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Part Name">';
+                }
+
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                document.body.classList.add('modal-active');
+                setTimeout(() => modal.classList.add('modal-active'), 10);
+            }
+
+            function closeModal() {
+                modal.classList.remove('modal-active');
+                setTimeout(() => {
+                    modal.classList.add('opacity-0', 'pointer-events-none');
+                    document.body.classList.remove('modal-active');
+                }, 200);
+            }
+
+            function addPartField() {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = 'parts';
+                input.className = 'w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500';
+                input.placeholder = 'Part Name';
+                document.getElementById('parts-container').appendChild(input);
+            }
+
+            function getCurrentMode() {
+                return currentMode;
+            }
+
+            return {
+                open: openModal,
+                close: closeModal,
+                addPartField: addPartField,
+                getCurrentMode: getCurrentMode
+            };
+        })();
+
+        window.openModal = ModalModule.open;
+        window.closeModal = ModalModule.close;
+        window.addPartField = ModalModule.addPartField;
+        window.deleteEquipment = EquipmentModule.deleteEquipment;
+
+        // ================================================
+        // APPLICATION INITIALIZATION
+        // ================================================
+        document.addEventListener('DOMContentLoaded', function () {
+            AuthModule.init();
+            SidebarModule.init();
+            EquipmentModule.init();
+        });
+    </script>
+</body>
+
+</html>
