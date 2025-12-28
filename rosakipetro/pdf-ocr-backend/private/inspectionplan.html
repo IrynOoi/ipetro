@@ -1,3 +1,4 @@
+<!-- // inspectionplan.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -153,26 +154,55 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
         }
 
+     /* Base style for notes (Read-Only View) */
         .editable-notes {
             min-height: 200px;
             padding: 16px;
-            border: 2px dashed #D1D5DB;
+            border: 1px solid transparent; /* Invisible border by default */
             border-radius: 8px;
-            background: #FAFAFA;
+            background: transparent;       /* Clear background by default */
             transition: all 0.2s;
         }
 
-        .editable-notes:hover {
+        /* Style ONLY when Edit Mode is Active */
+        .editable-notes[contenteditable="true"] {
+            border: 2px dashed #D1D5DB;
+            background: #FAFAFA;
+        }
+
+        .editable-notes[contenteditable="true"]:hover {
             border-color: #3B82F6;
             background: #F0F9FF;
         }
 
-        .editable-notes:focus {
+        .editable-notes[contenteditable="true"]:focus {
             outline: none;
             border-color: #2563EB;
             border-style: solid;
             background: white;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+       /* ✅ CORRECT: Hover effects ONLY appear when editing is enabled */
+        .editable-notes[contenteditable="true"]:hover {
+            border-color: #3B82F6;
+            background: #F0F9FF;
+            cursor: text;
+        }
+
+        .editable-notes[contenteditable="true"]:focus {
+            outline: none;
+            border-color: #2563EB;
+            border-style: solid;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Ensure read-only view looks flat and non-interactive */
+        .editable-notes[contenteditable="false"] {
+            border: 1px solid transparent;
+            background: transparent;
+            cursor: default;
         }
 
         .edit-mode-indicator {
@@ -191,6 +221,147 @@
             gap: 8px;
             animation: slideInRight 0.3s ease-out;
         }
+
+/* ================================================
+   COMPONENT ANALYSIS TABLE HOVER EFFECTS
+   ================================================ */
+
+/* Add smooth transition for table rows */
+.report-table tbody tr {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Original hover effect - light grey background */
+.report-table tbody tr:hover {
+    background-color: #f9fafb !important; /* Light grey */
+}
+
+/* More pronounced hover effect for all cells */
+.report-table tbody tr:hover td {
+    background-color: #f9fafb !important;
+}
+
+/* Special handling for risk rating cells - make them slightly darker on hover */
+.report-table tbody tr:hover td.read-only-field.bg-green-200 {
+    background-color: #bbf7d0 !important; /* Darker green */
+}
+
+.report-table tbody tr:hover td.read-only-field.bg-yellow-200 {
+    background-color: #fef08a !important; /* Darker yellow */
+}
+
+.report-table tbody tr:hover td.read-only-field.bg-red-200 {
+    background-color: #fecaca !important; /* Darker red */
+}
+
+/* Hover effect for MEDIUM HIGH */
+.report-table tbody tr:hover td.read-only-field.bg-orange-200 {
+    background-color: #fdba74 !important; /* Darker orange on hover */
+}
+
+/* Add a subtle border highlight on hover */
+.report-table tbody tr:hover {
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.1);
+}
+
+/* For a more modern striped table with hover */
+.report-table tbody tr:nth-child(even) {
+    background-color: #f8fafc; /* Very light grey for even rows */
+}
+
+.report-table tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* White for odd rows */
+}
+
+/* Hover effect overrides the stripe */
+.report-table tbody tr:nth-child(even):hover,
+.report-table tbody tr:nth-child(odd):hover {
+    background-color: #f1f5f9 !important; /* Slightly darker grey on hover */
+}
+
+/* Optional: Add a subtle animation for the hover effect */
+.report-table tbody tr {
+    position: relative;
+}
+
+.report-table tbody tr::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+    transition: opacity 0.2s;
+}
+
+.report-table tbody tr:hover::after {
+    opacity: 0;
+}
+
+/* For a cleaner look, remove borders on hover */
+.report-table tbody tr:hover td {
+    border-color: #e5e7eb !important;
+}
+      
+/* Risk rating cell base styles */
+.read-only-field {
+    cursor: default !important;
+    user-select: text !important;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Prevent hover effects from interfering with the cell */
+.read-only-field:hover {
+    box-shadow: none !important;
+}
+
+/* Risk rating cell specific hover effects */
+td.read-only-field.bg-green-200:hover {
+    background-color: #bbf7d0 !important; /* Darker green on hover */
+}
+
+td.read-only-field.bg-yellow-200:hover {
+    background-color: #fef08a !important; /* Darker yellow on hover */
+}
+
+td.read-only-field.bg-red-200:hover {
+    background-color: #fecaca !important; /* Darker red on hover */
+}
+
+/* Add this for MEDIUM HIGH (orange) */
+td.read-only-field.bg-orange-200:hover {
+    background-color: #fdba74 !important; /* Darker orange on hover */
+}
+
+/* Ensure risk rating colors are preserved */
+.bg-green-200 {
+    background-color: #d1fae5 !important;
+}
+
+.bg-yellow-200 {
+    background-color: #fef3c7 !important;
+}
+
+.bg-orange-200 {
+    background-color: #fed7aa !important;
+}
+
+.bg-red-200 {
+    background-color: #fee2e2 !important;
+}
+
+/* Validation styling */
+.editable-invalid {
+    background-color: #FEF2F2 !important;
+    border: 2px solid #DC2626 !important;
+}
+
+.editable-valid {
+    background-color: #F0FDF4 !important;
+    border: 2px solid #10B981 !important;
+}
+
 
         .edit-mode-indicator.active {
             display: flex;
@@ -788,7 +959,7 @@
                 <h3 class="text-lg font-bold text-gray-800" id="modal-title">Inspection Plan</h3>
                 <div class="flex gap-3 items-center">
                     <!-- Edit Mode Toggle -->
-                    <button id="edit-toggle-btn" onclick="toggleEditMode()" class="btn btn-secondary shadow-md">
+                    <button id="edit-toggle-btn" onclick="toggleEditMode()" class="btn btn-secondary shadow-md" style="display: none;">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                         </svg>
@@ -844,44 +1015,244 @@
         // ================================================
         let isEditMode = false;
 
+
+
+
+ 
         /**
          * Toggle edit mode for the report
          */
         function toggleEditMode() {
-            isEditMode = !isEditMode;
-            const editBtn = document.getElementById('edit-btn-text');
-            const indicator = document.getElementById('edit-mode-indicator');
-            const editableElements = document.querySelectorAll('[data-editable]');
-            
-            if (isEditMode) {
-                // Enable editing
-                editBtn.textContent = 'Disable Edit';
-                indicator.classList.add('active');
-                editableElements.forEach(el => {
-                    el.setAttribute('contenteditable', 'true');
-                });
-                
-                Swal.fire({
-                    ...CONFIG.SWAL_OPTIONS,
-                    title: 'Edit Mode Enabled',
-                    html: '<p class="text-sm text-gray-600">You can now click on any highlighted field to edit it. Your changes will be included in exports.</p>',
-                    icon: 'info',
-                    timer: 3000,
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    background: '#DBEAFE',
-                    color: '#1E40AF'
-                });
-            } else {
-                // Disable editing
-                editBtn.textContent = 'Enable Edit';
-                indicator.classList.remove('active');
-                editableElements.forEach(el => {
-                    el.setAttribute('contenteditable', 'false');
-                });
+    const currentUser = AuthModule.getCurrentUser();
+    
+    // Check if user is admin
+    if (!currentUser || currentUser.role !== 'admin') {
+        Swal.fire({
+            ...CONFIG.SWAL_OPTIONS,
+            title: 'Permission Denied',
+            html: '<p class="text-sm text-gray-600">Only administrators can enable edit mode for inspection plans.</p>',
+            icon: 'warning',
+            timer: 3000,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            background: '#FEF3C7',
+            color: '#92400E'
+        });
+        return;
+    }
+    
+    isEditMode = !isEditMode;
+    const editBtn = document.getElementById('edit-btn-text');
+    const indicator = document.getElementById('edit-mode-indicator');
+    const editableElements = document.querySelectorAll('[data-editable]');
+    
+    if (isEditMode) {
+        // Enable editing
+        editBtn.textContent = 'Disable Edit';
+        indicator.classList.add('active');
+        editableElements.forEach(el => {
+            el.setAttribute('contenteditable', 'true');
+        });
+        
+        // Add validation event listeners for temperature and pressure fields
+        addValidationListeners();
+        
+        Swal.fire({
+            ...CONFIG.SWAL_OPTIONS,
+            title: 'Edit Mode Enabled (Admin)',
+            html: '<p class="text-sm text-gray-600">You are now in edit mode as an administrator. Changes will be included in exports.</p>',
+            icon: 'info',
+            timer: 3000,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            background: '#DBEAFE',
+            color: '#1E40AF'
+        });
+    } else {
+        // Disable editing
+        editBtn.textContent = 'Enable Edit';
+        indicator.classList.remove('active');
+        editableElements.forEach(el => {
+            el.setAttribute('contenteditable', 'false');
+            el.classList.remove('editable-invalid', 'editable-valid');
+        });
+        
+        // Remove validation event listeners
+        removeValidationListeners();
+    }
+}
+
+// Add these helper functions for validation
+function addValidationListeners() {
+    // Add input validation for temperature and pressure fields
+    const tempPressureFields = document.querySelectorAll('[data-validation]');
+    tempPressureFields.forEach(field => {
+        field.addEventListener('input', validateNumericField);
+        field.addEventListener('blur', validateNumericRange);
+        field.addEventListener('focus', () => {
+            // Store original value on focus
+            if (!field.dataset.originalValue) {
+                field.dataset.originalValue = field.textContent.trim();
             }
+        });
+        // Add input event for immediate risk rating update
+        field.addEventListener('input', function() {
+            // Debounce the risk rating update
+            clearTimeout(this.riskUpdateTimeout);
+            this.riskUpdateTimeout = setTimeout(() => {
+                updateRiskRatingForRow(this);
+            }, 300);
+        });
+    });
+}
+function removeValidationListeners() {
+    const tempPressureFields = document.querySelectorAll('[data-validation]');
+    tempPressureFields.forEach(field => {
+        field.removeEventListener('input', validateNumericField);
+        field.removeEventListener('blur', validateNumericRange);
+    });
+}
+
+function validateNumericField(event) {
+    const field = event.target;
+    const value = field.textContent.trim();
+    
+    // Allow empty, dash, or numeric values
+    if (value === '' || value === '-' || /^-?\d*\.?\d*$/.test(value)) {
+        field.classList.remove('editable-invalid');
+        field.classList.add('editable-valid');
+    } else {
+        field.classList.remove('editable-valid');
+        field.classList.add('editable-invalid');
+    }
+}
+
+// Add this function after the validateNumericField function
+function calculateRiskRating(temp, pressure) {
+    const tempValue = temp === '-' || temp === '' ? 0 : parseFloat(temp);
+    const pressureValue = pressure === '-' || pressure === '' ? 0 : parseFloat(pressure);
+    
+    if (isNaN(tempValue) || isNaN(pressureValue)) {
+        return 'LOW'; // Default if invalid
+    }
+    
+    // Updated logic for 4 risk categories
+    if (tempValue > 400 || pressureValue > 8) {
+        return 'HIGH';
+    } else if (tempValue > 300 || pressureValue > 6) {
+        return 'MEDIUM HIGH';
+    } else if (tempValue > 200 || pressureValue > 5) {
+        return 'MEDIUM';
+    } else {
+        return 'LOW';
+    }
+}
+
+function updateRiskRatingForRow(field) {
+    const row = field.closest('tr');
+    if (!row) return;
+    
+    // Find temperature and pressure fields in the same row
+    const tempField = row.querySelector('[data-validation="temp"]');
+    const pressureField = row.querySelector('[data-validation="pressure"]');
+    const riskCell = row.querySelector('.read-only-field');
+    
+    if (!tempField || !pressureField || !riskCell) return;
+    
+    // Get current values
+    const temp = tempField.textContent.trim();
+    const pressure = pressureField.textContent.trim();
+    
+    // Calculate new risk rating
+    const newRiskRating = calculateRiskRating(temp, pressure);
+    
+    // Update risk rating cell
+const riskColors = {
+    'LOW': 'bg-green-200',
+    'MEDIUM': 'bg-yellow-200',
+    'MEDIUM HIGH': 'bg-orange-200',  // Add orange for MEDIUM HIGH
+    'HIGH': 'bg-red-200'
+};
+    
+    // Remove all risk color classes
+    riskCell.classList.remove('bg-green-200', 'bg-yellow-200', 'bg-red-200');
+    
+    // Add new risk color class
+    if (riskColors[newRiskRating]) {
+        riskCell.classList.add(riskColors[newRiskRating]);
+    }
+    
+    // Update risk rating text
+    riskCell.textContent = newRiskRating;
+    
+    // Store the updated risk rating in the field
+    riskCell.dataset.riskRating = newRiskRating;
+}
+
+function validateNumericRange(event) {
+    const field = event.target;
+    const value = parseFloat(field.textContent.trim());
+    
+    // Skip if value is not a number or is dash
+    if (isNaN(value) || field.textContent.trim() === '-') {
+        field.classList.remove('editable-invalid', 'editable-valid');
+        updateRiskRatingForRow(field); // Still update risk rating
+        return;
+    }
+    
+    const min = parseFloat(field.dataset.min);
+    const max = parseFloat(field.dataset.max);
+    const validationType = field.dataset.validation;
+    
+    let isValid = true;
+    let message = '';
+    
+    if (validationType === 'temp') {
+        if (value < min || value > max) {
+            isValid = false;
+            message = `Temperature must be between ${min}°C and ${max}°C`;
         }
+    } else if (validationType === 'pressure') {
+        if (value < min || value > max) {
+            isValid = false;
+            message = `Pressure must be between ${min} MPa and ${max} MPa`;
+        }
+    }
+    
+    if (!isValid) {
+        field.classList.add('editable-invalid');
+        field.classList.remove('editable-valid');
+        
+        // Show warning tooltip
+        Swal.fire({
+            ...CONFIG.SWAL_OPTIONS,
+            title: 'Invalid Value',
+            text: message,
+            icon: 'warning',
+            timer: 2000,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            background: '#FEF3C7',
+            color: '#92400E'
+        });
+        
+        // Revert to original value
+        setTimeout(() => {
+            field.textContent = field.dataset.originalValue || '-';
+            field.classList.remove('editable-invalid', 'editable-valid');
+            updateRiskRatingForRow(field); // Update risk rating after revert
+        }, 100);
+    } else {
+        field.classList.remove('editable-invalid');
+        field.classList.add('editable-valid');
+        
+        // Update risk rating when temperature or pressure changes
+        updateRiskRatingForRow(field);
+    }
+}
 
         // ================================================
         // AUTHENTICATION MODULE
@@ -908,7 +1279,7 @@
                 }
             }
 
-            function updateUserUI() {
+           function updateUserUI() {
                 if (!currentUser) return;
                 
                 const userInitials = document.querySelector('.w-10.h-10.rounded-full');
@@ -921,6 +1292,18 @@
                     userNameElement.textContent = currentUser.username;
                 }
                 
+                // --- ADD THIS CODE BLOCK ---
+                // Control visibility of the "Enable Edit" button
+                const editBtn = document.getElementById('edit-toggle-btn');
+                if (editBtn) {
+                    if (currentUser.role === 'admin') {
+                        editBtn.style.display = 'flex'; // Show for admin
+                    } else {
+                        editBtn.style.display = 'none'; // Hide for everyone else
+                    }
+                }
+                // ---------------------------
+
                 // Show admin section for admin users
                 if (currentUser.role === 'admin') {
                     const adminSection = document.getElementById('admin-section');
@@ -1097,12 +1480,13 @@
                                 <div class="font-bold text-gray-900">${insp.equipment_no}</div>
                                 <div class="text-xs text-gray-500 mt-0.5">${insp.equipment_desc}</div>
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-600 flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-600">
-                                    ${insp.inspected_by.substring(0, 2).toUpperCase()}
-                                </div>
-                                ${insp.inspected_by}
-                            </td>
+                                <td class="px-6 py-4 text-sm text-gray-600 flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-600">
+                                ${(insp.inspected_by || 'NA').substring(0, 2).toUpperCase()}
+                            </div>
+                            
+                            ${insp.inspected_by || '<span class="text-gray-400 italic">Unassigned</span>'}
+                        </td>
                             <td class="px-6 py-4 text-sm text-gray-500 text-center">
                                 <span class="bg-blue-50 text-blue-600 py-1 px-3 rounded-full text-xs font-bold border border-blue-100">${insp.part_count}</span>
                             </td>
@@ -1120,173 +1504,392 @@
                 }
             }
 
-            async function generatePlan(inspectionId) {
-                modalTitle.innerText = `Inspection Plan for #${inspectionId}`;
-                modalContent.innerHTML = '<div class="flex flex-col items-center justify-center py-12"><div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div><p class="text-gray-500">Generating Report...</p></div>';
-                ModalModule.open();
+async function generatePlan(inspectionId) {
+    modalTitle.innerText = `Inspection Plan for #${inspectionId}`;
+    modalContent.innerHTML = '<div class="flex flex-col items-center justify-center py-12"><div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div><p class="text-gray-500">Generating Report...</p></div>';
+    ModalModule.open();
+    
+    try {
+        const res = await fetch(`http://localhost:3000/api/inspection-plan/${inspectionId}`, {
+            credentials: 'include'
+        });
+        const result = await res.json();
+        
+        if (result.success) {
+            currentReportData = result.data;
+            const currentUser = AuthModule.getCurrentUser();
+            const isAdmin = currentUser && currentUser.role === 'admin';
+            
+            // Generate the report HTML with the correct pressure range (0-10 MPa)
+            modalContent.innerHTML = createReportHTML(result.data, isAdmin);
+            
+            const editButton = document.getElementById('edit-toggle-btn');
+            
+            if (currentUser && currentUser.role === 'admin') {
+                editButton.style.display = 'inline-flex';
+                editButton.disabled = false;
+                editButton.querySelector('#edit-btn-text').textContent = 'Enable Edit';
                 
-                try {
-                    const res = await fetch(`http://localhost:3000/api/inspection-plan/${inspectionId}`, {
-                        credentials: 'include'
+                // Initialize risk ratings based on current values when admin
+             // Replace this section in the generatePlan function
+setTimeout(() => {
+    const rows = modalContent.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const tempField = row.querySelector('[data-validation="temp"]');
+        const pressureField = row.querySelector('[data-validation="pressure"]');
+        if (tempField && pressureField) {
+            // Store original values for validation
+            if (!tempField.dataset.originalValue) {
+                tempField.dataset.originalValue = tempField.textContent.trim();
+            }
+            if (!pressureField.dataset.originalValue) {
+                pressureField.dataset.originalValue = pressureField.textContent.trim();
+            }
+            
+            // Initialize risk rating for this row
+            updateRiskRatingForRow(tempField);
+        }
+    });
+    
+    // Add validation listeners if in edit mode
+    if (isEditMode) {
+        addValidationListeners();
+    }
+}, 100);
+            } else {
+                editButton.style.display = 'none';
+                // Ensure edit mode is disabled for non-admins
+                if (isEditMode) {
+                    isEditMode = false;
+                    const indicator = document.getElementById('edit-mode-indicator');
+                    const editableElements = document.querySelectorAll('[data-editable]');
+                    editableElements.forEach(el => {
+                        el.setAttribute('contenteditable', 'false');
                     });
-                    const result = await res.json();
-                    
-                    if (result.success) {
-                        currentReportData = result.data;
-                        modalContent.innerHTML = createReportHTML(result.data);
-                    } else {
-                        modalContent.innerHTML = '<p class="text-red-500 text-center py-10">Could not load report data.</p>';
-                    }
-                } catch(e) {
-                    modalContent.innerHTML = '<p class="text-red-500 text-center py-10">Error: ' + e.message + '</p>';
+                    indicator.classList.remove('active');
                 }
             }
+        } else {
+            modalContent.innerHTML = '<p class="text-red-500 text-center py-10">Could not load report data.</p>';
+        }
+    } catch(e) {
+        console.error('Error loading inspection plan:', e);
+        modalContent.innerHTML = `<div class="text-center py-10">
+            <div class="text-red-500 text-lg font-bold mb-2">Error Loading Report</div>
+            <p class="text-gray-600">${e.message || 'Please try again later.'}</p>
+        </div>`;
+    }
+}
+       function createReportHTML(data, isAdmin = false) {
+    const insp = data.inspection;
+    const parts = data.parts;
+    const methods = data.methods || [];
+    const riskColors = {
+        'LOW': 'bg-green-200',
+        'MEDIUM': 'bg-yellow-200',
+        'HIGH': 'bg-red-200'
+    };
 
-            function createReportHTML(data) {
-                const insp = data.inspection;
-                const parts = data.parts;
-                const methods = data.methods || [];
-                const riskColors = {
-                    'LOW': 'bg-green-200',
-                    'MEDIUM': 'bg-yellow-200',
-                    'HIGH': 'bg-red-200'
-                };
+    // Helper function to create editable attributes
+    const editableAttr = isAdmin ? 'data-editable="true"' : '';
+    const contentEditableAttr = isAdmin ? 'contenteditable="false"' : '';
+    
+    // Add validation limits for temperature and pressure
+    const tempValidation = isAdmin ? 'data-validation="temp" data-min="-50" data-max="500"' : '';
+    const pressureValidation = isAdmin ? 'data-validation="pressure" data-min="0" data-max="10"' : '';
 
-                let header = `
-                    <div class="mb-8 border-b-2 border-gray-800 pb-4">
-                        <h1 class="text-3xl font-bold text-center mb-6 text-gray-900 tracking-tight">INSPECTION PLAN (ON-STREAM)</h1>
-                        <table class="w-full border-collapse report-header-table text-sm">
-                            <tr>
-                                <td class="p-2 font-bold bg-gray-100 w-1/6">Description :</td>
-                                <td class="p-2" colspan="3"><span data-editable="true">${insp.equipment_desc || '-'}</span></td>
-                                <td class="p-2 font-bold bg-gray-100 w-1/6">PLANT UNIT:</td>
-                                <td class="p-2" colspan="2"><span data-editable="true">iPETRO</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-2 font-bold bg-gray-100">Tag. No :</td>
-                                <td class="p-2 font-mono font-bold"><span data-editable="true">${insp.equipment_no || '-'}</span></td>
-                                <td class="p-2 font-bold bg-gray-100 w-1/6">PMT. No :</td>
-                                <td class="p-2"><span data-editable="true">${insp.pmt_no || '-'}</span></td>
-                                <td class="p-2 font-bold bg-gray-100">Rev</td>
-                                <td class="p-2"><span data-editable="true">00</span></td>
-                            </tr>
-                        </table>
-                    </div>
-                `;
+    let header = `
+        <div class="mb-8 border-b-2 border-gray-800 pb-4">
+            <h1 class="text-3xl font-bold text-center mb-6 text-gray-900 tracking-tight">INSPECTION PLAN (ON-STREAM)</h1>
+            <table class="w-full border-collapse report-header-table text-sm">
+                <tr>
+                    <td class="p-2 font-bold bg-gray-100 w-1/6">Description :</td>
+                    <td class="p-2" colspan="3"><span ${editableAttr} ${contentEditableAttr}>${insp.equipment_desc || '-'}</span></td>
+                    <td class="p-2 font-bold bg-gray-100 w-1/6">PLANT UNIT:</td>
+                    <td class="p-2" colspan="2"><span ${editableAttr} ${contentEditableAttr}>iPETRO</span></td>
+                </tr>
+                <tr>
+                    <td class="p-2 font-bold bg-gray-100">Tag. No :</td>
+                    <td class="p-2 font-mono font-bold"><span ${editableAttr} ${contentEditableAttr}>${insp.equipment_no || '-'}</span></td>
+                    <td class="p-2 font-bold bg-gray-100 w-1/6">PMT. No :</td>
+                    <td class="p-2"><span ${editableAttr} ${contentEditableAttr}>${insp.pmt_no || '-'}</span></td>
+                    <td class="p-2 font-bold bg-gray-100">Rev</td>
+                    <td class="p-2"><span ${editableAttr} ${contentEditableAttr}>00</span></td>
+                </tr>
+            </table>
+        </div>
+    `;
 
-                let partsTable = `
-                    <div class="mb-6">
-                        <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Component Analysis</h3>
-                        <table class="w-full border-collapse report-table mb-4 text-xs">
-                            <thead class="bg-gray-100 text-black font-bold">
-                                <tr>
-                                    <th class="p-2" rowspan="2">FLUID</th>
-                                    <th class="p-2" rowspan="2">COMPONENT</th>
-                                    <th class="p-2" rowspan="2">DESIGN CODE</th>
-                                    <th class="p-2" colspan="3">MATERIAL</th>
-                                    <th class="p-2" rowspan="2">INSULATED</th>
-                                    <th class="p-2" colspan="2">OP. PARAMETER</th>
-                                    <th class="p-2" rowspan="2">RISK RATING</th>
-                                    <th class="p-2" rowspan="2">CORROSION GROUP</th>
-                                </tr>
-                                <tr>
-                                    <th class="p-1">TYPE</th><th class="p-1">SPEC</th><th class="p-1">GR</th>
-                                    <th class="p-1">T (°C)</th><th class="p-1">P (Mpa)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${parts.map(p => `
-                                    <tr>
-                                        <td class="p-2 text-center"><span data-editable="true">${p.fluid || '-'}</span></td>
-                                        <td class="p-2 font-bold"><span data-editable="true">${p.part_name || '-'}</span></td>
-                                        <td class="p-2 text-center"><span data-editable="true">${p.design_code || insp.design_code || '-'}</span></td>
-                                        <td class="p-2 text-center"><span data-editable="true">${p.type || '-'}</span></td>
-                                        <td class="p-2 text-center"><span data-editable="true">${p.spec || '-'}</span></td>
-                                        <td class="p-2 text-center"><span data-editable="true">${p.grade || '-'}</span></td>
-                                        <td class="p-2 text-center"><span data-editable="true">${p.insulation ? (p.insulation.toLowerCase().startsWith('y') ? 'YES' : 'NO') : 'NO'}</span></td>
-                                        <td class="p-2 text-right font-mono"><span data-editable="true">${p.operating_temp || p.design_temp || '-'}</span></td>
-                                        <td class="p-2 text-right font-mono"><span data-editable="true">${p.operating_pressure || p.design_pressure || '-'}</span></td>
-                                        <td class="p-2 text-center font-bold border border-black ${riskColors[p.current_risk_rating] || ''}"><span data-editable="true">${p.current_risk_rating || '-'}</span></td>
-                                        <td class="p-2 text-center" style="white-space: pre-wrap;"><span data-editable="true">${p.corrosion_group || '-'}</span></td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-                
-                let methodsTable = `
-                    <div class="w-1/2 pr-4">
-                        <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Inspection Strategy</h3>
-                        <table class="w-full border-collapse report-table text-xs mb-4">
-                            <thead class="bg-gray-100 text-black font-bold">
-                                <tr>
-                                    <th class="p-2 text-left">INSPECTION METHOD</th>
-                                    <th class="p-2">COVERAGE</th>
-                                    <th class="p-2 text-left">DAMAGE MECHANISM</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${methods.map(m => `
-                                    <tr>
-                                        <td class="p-2 font-bold"><span data-editable="true">${m.method_name || '-'}</span></td>
-                                        <td class="p-2 text-center"><span data-editable="true">${m.coverage || '-'}</span></td>
-                                        <td class="p-2"><span data-editable="true">${m.damage_mechanism || '-'}</span></td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                        
-                        <div class="mt-6">
-                            <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Inspector Notes</h3>
-                            <div class="editable-notes text-xs" data-editable="true" contenteditable="false">
+    let partsTable = `
+        <div class="mb-6">
+            <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Component Analysis</h3>
+            <table class="w-full border-collapse report-table mb-4 text-xs">
+                <thead class="bg-gray-100 text-black font-bold">
+                    <tr>
+                        <th class="p-2" rowspan="2">FLUID</th>
+                        <th class="p-2" rowspan="2">COMPONENT</th>
+                        <th class="p-2" rowspan="2">DESIGN CODE</th>
+                        <th class="p-2" colspan="3">MATERIAL</th>
+                        <th class="p-2" rowspan="2">INSULATED</th>
+                        <th class="p-2" colspan="2">OP. PARAMETER</th>
+                        <th class="p-2" rowspan="2">RISK RATING</th>
+                        <th class="p-2" rowspan="2">CORROSION GROUP</th>
+                    </tr>
+                    <tr>
+                        <th class="p-1">TYPE</th><th class="p-1">SPEC</th><th class="p-1">GR</th>
+                        <th class="p-1">T (°C)</th><th class="p-1">P (Mpa)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${parts.map(p => `
+                        <tr>
+                            <td class="p-2 text-center"><span ${editableAttr} ${contentEditableAttr}>${p.fluid || '-'}</span></td>
+                            <td class="p-2 font-bold"><span ${editableAttr} ${contentEditableAttr}>${p.part_name || '-'}</span></td>
+                            <td class="p-2 text-center"><span ${editableAttr} ${contentEditableAttr}>${p.design_code || insp.design_code || '-'}</span></td>
+                            <td class="p-2 text-center"><span ${editableAttr} ${contentEditableAttr}>${p.type || '-'}</span></td>
+                            <td class="p-2 text-center"><span ${editableAttr} ${contentEditableAttr}>${p.spec || '-'}</span></td>
+                            <td class="p-2 text-center"><span ${editableAttr} ${contentEditableAttr}>${p.grade || '-'}</span></td>
+                            <td class="p-2 text-center"><span ${editableAttr} ${contentEditableAttr}>${p.insulation ? (p.insulation.toLowerCase().startsWith('y') ? 'YES' : 'NO') : 'NO'}</span></td>
+                            <td class="p-2 text-right font-mono">
+                                <span ${editableAttr} ${contentEditableAttr} ${tempValidation} 
+                                      data-original-value="${p.operating_temp || p.design_temp || ''}">
+                                    ${p.operating_temp || p.design_temp || '-'}
+                                </span>
+                            </td>
+                            <td class="p-2 text-right font-mono">
+                                <span ${editableAttr} ${contentEditableAttr} ${pressureValidation}
+                                      data-original-value="${p.operating_pressure || p.design_pressure || ''}">
+                                    ${p.operating_pressure || p.design_pressure || '-'}
+                                </span>
+                            </td>
+                         <td class="p-2 text-center font-bold border border-black read-only-field ${riskColors[p.current_risk_rating] || ''}" 
+                        data-risk-rating="${p.current_risk_rating || 'LOW'}">
+                        ${p.current_risk_rating || '-'}
+                        </td>
+                            <td class="p-2 text-center" style="white-space: pre-wrap;"><span ${editableAttr} ${contentEditableAttr}>${p.corrosion_group || '-'}</span></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+    
+    let methodsTable = `
+        <div class="w-1/2 pr-4">
+            <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Inspection Strategy</h3>
+            <table class="w-full border-collapse report-table text-xs mb-4">
+                <thead class="bg-gray-100 text-black font-bold">
+                    <tr>
+                        <th class="p-2 text-left">INSPECTION METHOD</th>
+                        <th class="p-2">COVERAGE</th>
+                        <th class="p-2 text-left">DAMAGE MECHANISM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${methods.map(m => `
+                        <tr>
+                            <td class="p-2 font-bold"><span ${editableAttr} ${contentEditableAttr}>${m.method_name || '-'}</span></td>
+                            <td class="p-2 text-center"><span ${editableAttr} ${contentEditableAttr}>${m.coverage || '-'}</span></td>
+                            <td class="p-2"><span ${editableAttr} ${contentEditableAttr}>${m.damage_mechanism || '-'}</span></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            
+            <div class="mt-6">
+                <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Inspector Notes</h3>
+                <div class="editable-notes text-xs" ${editableAttr} ${contentEditableAttr}>
 Click "Enable Edit" above to add your inspection findings, observations, and notes here...
 
 • Document any anomalies found
 • Record measurement readings
 • Note deviations from expected conditions
 • Add recommendations for follow-up actions
-                            </div>
-                        </div>
-                    </div>
-                `;
+                </div>
+            </div>
+        </div>
+    `;
 
-                let imageSection = `
-                    <div class="w-1/2 pl-4 flex flex-col items-center justify-center border-l border-gray-200">
-                        <h3 class="text-sm font-bold uppercase mb-2 text-gray-500 w-full text-left">Equipment Diagram</h3>
-                        <div class="border border-gray-300 p-2 bg-white shadow-sm w-full flex justify-center">
-                            <img src="${insp.image_url || 'https://placehold.co/600x400/f3f4f6/9ca3af?text=No+Diagram+Available'}" alt="Equipment Diagram" class="report-image object-contain" style="max-height: 300px; max-width: 100%;">
-                        </div>
-                        
-                        <div class="mt-6 w-full">
-                            <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Recommendations</h3>
-                            <div class="editable-notes text-xs" data-editable="true" contenteditable="false">
+    let imageSection = `
+        <div class="w-1/2 pl-4 flex flex-col items-center justify-center border-l border-gray-200">
+            <h3 class="text-sm font-bold uppercase mb-2 text-gray-500 w-full text-left">Equipment Diagram</h3>
+            <div class="border border-gray-300 p-2 bg-white shadow-sm w-full flex justify-center">
+                <img src="${insp.image_url || 'https://placehold.co/600x400/f3f4f6/9ca3af?text=No+Diagram+Available'}" alt="Equipment Diagram" class="report-image object-contain" style="max-height: 300px; max-width: 100%;">
+            </div>
+            
+            <div class="mt-6 w-full">
+                <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Recommendations</h3>
+                <div class="editable-notes text-xs" ${editableAttr} ${contentEditableAttr}>
 Click "Enable Edit" to add recommendations...
 
 • Suggest corrective actions
 • Identify priority items
 • Recommend next inspection date
-                            </div>
-                        </div>
-                    </div>
-                `;
+                </div>
+            </div>
+        </div>
+    `;
 
-                return `${header}${partsTable}<div class="flex mt-8">${methodsTable}${imageSection}</div>`;
-            }
+    return `${header}${partsTable}<div class="flex mt-8">${methodsTable}${imageSection}</div>`;
+}
 
             /**
              * Get text content from editable elements for PPT export
              */
-            function getEditedContent() {
-                const editedData = {};
-                document.querySelectorAll('[data-editable="true"]').forEach((el, index) => {
-                    editedData[`field_${index}`] = el.textContent || el.innerText;
-                });
-                return editedData;
-            }
+           function getEditedContent() {
+    const editedData = {};
+    document.querySelectorAll('[data-editable="true"]').forEach((el, index) => {
+        // Skip fields that are currently invalid
+        if (!el.classList.contains('editable-invalid')) {
+            editedData[`field_${index}`] = el.textContent || el.innerText;
+        } else {
+            // Use original value for invalid fields
+            editedData[`field_${index}`] = el.dataset.originalValue || el.textContent || el.innerText;
+        }
+    });
+    return editedData;
+}
+
+
+//automatic risk rating calculation 
+// Add this function after the existing validation functions
+function calculateRiskRating(temp, pressure) {
+    // Parse values (handle empty/dash)
+    const tempValue = temp === '-' || temp === '' ? 0 : parseFloat(temp);
+    const pressureValue = pressure === '-' || pressure === '' ? 0 : parseFloat(pressure);
+    
+    if (isNaN(tempValue) || isNaN(pressureValue)) {
+        return 'LOW'; // Default if invalid
+    }
+    
+    // Risk calculation logic (adjust thresholds as needed)
+    if (tempValue > 400 || pressureValue > 8) {
+        return 'HIGH';
+    } else if (tempValue > 200 || pressureValue > 5) {
+        return 'MEDIUM';
+    } else {
+        return 'LOW';
+    }
+}
+
+// Update the validateNumericRange function to also update risk rating
+function validateNumericRange(event) {
+    const field = event.target;
+    const value = parseFloat(field.textContent.trim());
+    
+    // Skip if value is not a number or is dash
+    if (isNaN(value) || field.textContent.trim() === '-') {
+        field.classList.remove('editable-invalid', 'editable-valid');
+        return;
+    }
+    
+    const min = parseFloat(field.dataset.min);
+    const max = parseFloat(field.dataset.max);
+    const validationType = field.dataset.validation;
+    
+    let isValid = true;
+    let message = '';
+    
+    if (validationType === 'temp') {
+        if (value < min || value > max) {
+            isValid = false;
+            message = `Temperature must be between ${min}°C and ${max}°C`;
+        }
+    } else if (validationType === 'pressure') {
+        if (value < min || value > max) {
+            isValid = false;
+            message = `Pressure must be between ${min} MPa and ${max} MPa`;
+        }
+    }
+    
+    if (!isValid) {
+        field.classList.add('editable-invalid');
+        field.classList.remove('editable-valid');
+        
+        // Show warning tooltip
+        Swal.fire({
+            ...CONFIG.SWAL_OPTIONS,
+            title: 'Invalid Value',
+            text: message,
+            icon: 'warning',
+            timer: 2000,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            background: '#FEF3C7',
+            color: '#92400E'
+        });
+        
+        // Revert to original value
+        setTimeout(() => {
+            field.textContent = field.dataset.originalValue || '-';
+            field.classList.remove('editable-invalid', 'editable-valid');
+        }, 100);
+    } else {
+        field.classList.remove('editable-invalid');
+        field.classList.add('editable-valid');
+        
+        // Update risk rating when temperature or pressure changes
+        updateRiskRatingForRow(field);
+    }
+}
+
+// Add this function to update risk rating for a row
+function updateRiskRatingForRow(field) {
+    const row = field.closest('tr');
+    if (!row) return;
+    
+    // Find temperature and pressure fields in the same row
+    const tempField = row.querySelector('[data-validation="temp"]');
+    const pressureField = row.querySelector('[data-validation="pressure"]');
+    const riskCell = row.querySelector('.read-only-field');
+    
+    if (!tempField || !pressureField || !riskCell) return;
+    
+    // Get current values
+    const temp = tempField.textContent.trim();
+    const pressure = pressureField.textContent.trim();
+    
+    // Calculate new risk rating
+    const newRiskRating = calculateRiskRating(temp, pressure);
+    
+    // Update risk rating cell
+    const riskColors = {
+        'LOW': 'bg-green-200',
+        'MEDIUM': 'bg-yellow-200',
+        'HIGH': 'bg-red-200'
+    };
+    
+    // Remove all risk color classes
+    riskCell.classList.remove('bg-green-200', 'bg-yellow-200', 'bg-red-200');
+    
+    // Add new risk color class
+    if (riskColors[newRiskRating]) {
+        riskCell.classList.add(riskColors[newRiskRating]);
+    }
+    
+    // Update risk rating text
+    riskCell.textContent = newRiskRating;
+    
+    // Store the updated risk rating in the field
+    riskCell.dataset.riskRating = newRiskRating;
+}
+
 
             async function exportToPPT(data) {
                 try {
+
+
+                     const riskCells = document.querySelectorAll('.read-only-field');
+                     const riskRatings = Array.from(riskCells).map(cell => cell.textContent.trim());
+                    // Update data with current risk ratings
+                    if (riskRatings.length === data.parts.length) {
+                        data.parts.forEach((part, index) => {
+                            part.current_risk_rating = riskRatings[index] || part.current_risk_rating;
+                        });
+                    }
+                     
+
                     if (typeof PptxGenJS === 'undefined') {
                         throw new Error("PowerPoint library not loaded. Please check internet connection.");
                     }
@@ -1384,6 +1987,7 @@ Click "Enable Edit" to add recommendations...
                     let partRows = parts.map(p => {
                         let riskColor = 'FFFFFF';
                         if (p.current_risk_rating === 'HIGH') riskColor = 'FECACA';
+                        else if (p.current_risk_rating === 'MEDIUM HIGH') riskColor = 'FED7AA';  // Orange for MEDIUM HIGH
                         else if (p.current_risk_rating === 'MEDIUM') riskColor = 'FEF08A';
                         else if (p.current_risk_rating === 'LOW') riskColor = 'BBF7D0';
 

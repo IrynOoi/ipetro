@@ -1,3 +1,4 @@
+//
 <!DOCTYPE html>
 <html lang="en">
 
@@ -173,21 +174,35 @@
         }
 
         .parts-table td {
-            border-bottom: 1px solid var(--color-slate-100);
-            border-right: 1px solid var(--color-slate-50);
-            padding: 0;
-            text-align: center;
-            vertical-align: middle;
-            transition: background-color var(--transition-base);
-        }
+    border-bottom: 1px solid var(--color-slate-100);
+    border-right: 1px solid var(--color-slate-50);
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+    transition: background-color var(--transition-base);
+    position: relative; /* Add this */
+}
 
-        .parts-table tbody tr:hover td {
-            background-color: var(--color-slate-50);
-        }
+.parts-table input {
+    width: 100%;
+    border: none !important;   /* Change from 2px solid transparent to none */
+    text-align: center;
+    background: transparent;
+    padding: 0.625rem 0.5rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.813rem;
+    color: var(--color-slate-700);
+    transition: all var(--transition-base);
+    outline: none;
+    box-sizing: border-box;
+}
 
-        .parts-table tbody tr:last-child td {
-            border-bottom: none;
-        }
+.parts-table input:focus {
+    background: white;
+    box-shadow: inset 0 0 0 2px var(--color-primary); /* Use inset shadow instead of border */
+    position: relative;
+    z-index: 5;
+}
 
         .parts-table input {
             width: 100%;
@@ -247,6 +262,47 @@
             box-shadow: var(--shadow-xl);
             position: relative;
         }
+
+        /* ================================================
+   READ-ONLY INPUT STYLES
+   ================================================ */
+.readonly-input {
+    background-color: #f3f4f6 !important;
+    color: #6b7280 !important;
+    cursor: not-allowed !important;
+    border-color: #d1d5db !important;
+    pointer-events: none;
+}
+
+.readonly-input:hover {
+    background-color: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+}
+
+.readonly-input:focus {
+    background-color: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+    box-shadow: none !important;
+}
+
+/* Also update existing input styles to handle readonly */
+.parts-table input[readonly] {
+    background-color: #f3f4f6 !important;
+    color: #6b7280 !important;
+    cursor: not-allowed !important;
+    border-color: #d1d5db !important;
+}
+
+.parts-table input[readonly]:hover {
+    background-color: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+}
+
+.parts-table input[readonly]:focus {
+    background-color: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+    box-shadow: none !important;
+}
 
         #sidebar::before {
             content: '';
@@ -887,7 +943,7 @@
                                 <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
                                 Extracted Data
                             </h2>
-                            <span class="badge badge-info">Editable Grid</span>
+                            <span id="grid-status-badge" class="badge badge-info">Loading...</span>
                         </div>
                         <div id="parts-table-container" class="flex-1 overflow-auto">
                             <div class="flex items-center justify-center h-full text-slate-400 text-sm">
@@ -989,36 +1045,54 @@
             /**
              * Update UI with current user information
              */
-           function updateUserUI() {
-                if (!currentUser) return;
-
-                const userInitials = document.querySelector('.w-10.h-10.rounded-full');
-                if (userInitials) {
-                    userInitials.textContent = currentUser.username.substring(0, 2).toUpperCase();
-                }
-
-                const userNameElement = document.querySelector('.user-info-text .text-sm');
-                if (userNameElement) {
-                    userNameElement.textContent = currentUser.username;
-                }
-
-                // Show admin section for admin users
-                if (currentUser.role === 'admin') {
-                    const adminSection = document.getElementById('admin-section');
-                    const usersLink = document.getElementById('users-link');
-                    if (adminSection) adminSection.classList.remove('hidden');
-                    if (usersLink) usersLink.classList.remove('hidden');
-                } else {
-                    const deleteButtons = document.querySelectorAll('button[onclick*="delete"], .delete-btn');
-                    deleteButtons.forEach(btn => {
-                        btn.style.display = 'none';
-                    });
-                }
-
-                console.log('User UI updated:', currentUser.username, '(' + currentUser.role + ')');
+      function updateUserUI() {
+    if (!currentUser) return;
+    
+    const userInitials = document.querySelector('.w-10.h-10.rounded-full');
+    if (userInitials) {
+        userInitials.textContent = currentUser.username.substring(0, 2).toUpperCase();
+    }
+    
+    const userNameElement = document.querySelector('.user-info-text .text-sm');
+    if (userNameElement) {
+        userNameElement.textContent = currentUser.username;
+    }
+    
+    // Hide save button for non-admin users
+ 
+        const saveBtn = document.getElementById('save-db-btn');
+        if (saveBtn) {
+            if (currentUser.role === 'admin') {
+                saveBtn.style.display = 'flex';
+            } else {
+                saveBtn.style.display = 'none'; // <--- This line hides it for normal users
             }
-
-            /**
+        }
+    
+    // === ADD THIS ===
+    // Refresh the table to update readonly/editable state
+    setTimeout(() => {
+        if (window.DataModule && typeof window.DataModule.refreshTableWithAuthStatus === 'function') {
+            window.DataModule.refreshTableWithAuthStatus();
+        }
+    }, 100);
+    // ================
+    
+    // Show admin section for admin users
+    if (currentUser.role === 'admin') {
+        const adminSection = document.getElementById('admin-section');
+        const usersLink = document.getElementById('users-link');
+        if (adminSection) adminSection.classList.remove('hidden');
+        if (usersLink) usersLink.classList.remove('hidden');
+    } else {
+        const deleteButtons = document.querySelectorAll('button[onclick*="delete"], .delete-btn');
+        deleteButtons.forEach(btn => {
+            btn.style.display = 'none';
+        });
+    }
+    
+    console.log('User UI updated:', currentUser.username, '(' + currentUser.role + ')');
+}          /**
              * Handle user logout
              */
             async function logout() {
@@ -1085,6 +1159,9 @@
 
         // Expose logout to global scope
         window.logout = AuthModule.logout;
+
+
+
 
         // ================================================
         // SIDEBAR MODULE
@@ -1321,6 +1398,9 @@
         // ================================================
         // DATA MODULE
         // ================================================
+
+
+
         const DataModule = (function () {
             const equipmentSelect = document.getElementById('equipment-select');
             const partsContainer = document.getElementById('parts-table-container');
@@ -1331,6 +1411,24 @@
             let equipmentDataCache = [];
             let currentEquipId = null;
             let currentParts = [];
+
+
+
+            // Add this function to your DataModule
+function refreshTableWithAuthStatus() {
+    if (!currentParts || currentParts.length === 0) return;
+    
+    const currentUser = AuthModule.getCurrentUser();
+    const isAdmin = currentUser && currentUser.role === 'admin';
+    
+    // Get current equipment data
+    const selectedOption = equipmentSelect.options[equipmentSelect.selectedIndex];
+    const equipData = equipmentDataCache.find(e => e.equipment_id == currentEquipId);
+    const designCode = equipData ? equipData.design_code : '';
+    
+    // Re-render table with current auth status
+    renderTable(currentParts, designCode);
+}
 
             /**
              * Load equipment list from API
@@ -1397,80 +1495,113 @@
              * Render parts data table
              */
             function renderTable(parts, designCode) {
-                let html = `
-                    <table class="parts-table">
-                        <thead>
-                            <tr>
-                                <th rowspan="2">PART</th>
-                                <th rowspan="2">PHASE</th>
-                                <th rowspan="2">FLUID</th>
-                                <th rowspan="2">DESIGN CODE</th>
-                                <th colspan="3">MATERIAL</th>
-                                <th rowspan="2">INSUL</th>
-                                <th colspan="2">DESIGN</th>
-                                <th colspan="2">OPERATING</th>
-                            </tr>
-                            <tr>
-                                <th>TYPE</th>
-                                <th>SPEC</th>
-                                <th>GRADE</th>
-                                <th>TEMP</th>
-                                <th>PRESS</th>
-                                <th>TEMP</th>
-                                <th>PRESS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
+    // Check if user is admin
+    const currentUser = AuthModule.getCurrentUser();
+    const isAdmin = currentUser && currentUser.role === 'admin';
+    
+    
+    // === ADD THIS ===
+    // Update the badge in the UI
+    const gridStatusElement = document.querySelector('.card-header .badge');
+    if (gridStatusElement) {
+        if (isAdmin) {
+            gridStatusElement.textContent = 'Editable Grid';
+            gridStatusElement.className = 'badge badge-info';
+        } else {
+            gridStatusElement.textContent = 'Read-Only View';
+            gridStatusElement.className = 'badge badge-secondary';
+        }
+    }            
 
-                parts.forEach(p => {
-                    html += `
-                        <tr data-part="${p.part_name.toLowerCase()}" data-id="${p.part_id}">
-                            <td class="part-name-cell font-bold text-left">${p.part_name}</td>
-                            <td><input data-f="phase" placeholder="-"></td>
-                            <td><input data-f="fluid" placeholder="-"></td>
-                            <td><input data-f="design_code" value="${designCode || ''}" placeholder="-" 
-                                class="${designCode ? 'ai-filled' : ''}"></td>
-                            <td><input data-f="type" placeholder="-"></td>
-                            <td><input data-f="spec" placeholder="-"></td>
-                            <td><input data-f="grade" placeholder="-"></td>
-                            <td><input data-f="insulation" placeholder="-"></td>
-                            <td><input type="number" step="0.01" data-f="design_temp" placeholder="-"></td>
-                            <td><input type="number" step="0.01" data-f="design_pressure" placeholder="-"></td>
-                            <td><input type="number" step="0.01" data-f="operating_temp" placeholder="-"></td>
-                            <td><input type="number" step="0.01" data-f="operating_pressure" placeholder="-"></td>
-                        </tr>
-                    `;
-                });
+    let html = `
+        <table class="parts-table">
+            <thead>
+                <tr>
+                    <th rowspan="2">PART</th>
+                    <th rowspan="2">PHASE</th>
+                    <th rowspan="2">FLUID</th>
+                    <th rowspan="2">DESIGN CODE</th>
+                    <th colspan="3">MATERIAL</th>
+                    <th rowspan="2">INSUL</th>
+                    <th colspan="2">DESIGN</th>
+                    <th colspan="2">OPERATING</th>
+                </tr>
+                <tr>
+                    <th>TYPE</th>
+                    <th>SPEC</th>
+                    <th>GRADE</th>
+                    <th>TEMP</th>
+                    <th>PRESS</th>
+                    <th>TEMP</th>
+                    <th>PRESS</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
 
-                partsContainer.innerHTML = html + '</tbody></table>';
+    parts.forEach(p => {
+        const readonlyAttr = isAdmin ? '' : 'readonly';
+        
+        html += `
+            <tr data-part="${p.part_name.toLowerCase()}" data-id="${p.part_id}">
+                <td class="part-name-cell font-bold text-left">${p.part_name}</td>
+                <td><input data-f="phase" placeholder="-" ${readonlyAttr}></td>
+                <td><input data-f="fluid" placeholder="-" ${readonlyAttr}></td>
+                <td><input data-f="design_code" value="${designCode || ''}" placeholder="-" 
+                    class="${designCode ? 'ai-filled' : ''}" ${readonlyAttr}></td>
+                <td><input data-f="type" placeholder="-" ${readonlyAttr}></td>
+                <td><input data-f="spec" placeholder="-" ${readonlyAttr}></td>
+                <td><input data-f="grade" placeholder="-" ${readonlyAttr}></td>
+                <td><input data-f="insulation" placeholder="-" ${readonlyAttr}></td>
+                <td><input type="number" step="0.01" data-f="design_temp" placeholder="-" ${readonlyAttr}></td>
+                <td><input type="number" step="0.01" data-f="design_pressure" placeholder="-" ${readonlyAttr}></td>
+                <td><input type="number" step="0.01" data-f="operating_temp" placeholder="-" ${readonlyAttr}></td>
+                <td><input type="number" step="0.01" data-f="operating_pressure" placeholder="-" ${readonlyAttr}></td>
+            </tr>
+        `;
+    });
 
-                // Add input change listeners
-                partsContainer.querySelectorAll('input').forEach(input => {
-                    input.addEventListener('input', () => {
-                        input.parentElement.classList.remove('ai-filled');
-                        input.parentElement.classList.add('user-edited');
-                    });
-                });
-            }
+    partsContainer.innerHTML = html + '</tbody></table>';
+
+    // Only add input event listeners for admin users
+    if (isAdmin) {
+        partsContainer.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+                input.parentElement.classList.remove('ai-filled');
+                input.parentElement.classList.add('user-edited');
+            });
+        });
+    }
+}
 
             /**
              * Fill table with extracted data
              */
             function fillTable(readings) {
-                readings.forEach(reading => {
-                    const row = document.querySelector(`tr[data-part="${reading.part_name.toLowerCase()}"]`);
-                    if (row) {
-                        for (const [key, value] of Object.entries(reading)) {
-                            const input = row.querySelector(`input[data-f="${key}"]`);
-                            if (input && value != null && value !== "" && input.value === "") {
-                                input.value = value;
-                                input.parentElement.classList.add('ai-filled');
-                            }
-                        }
+    const currentUser = AuthModule.getCurrentUser();
+    const isAdmin = currentUser && currentUser.role === 'admin';
+    const readonlyAttr = isAdmin ? '' : 'readonly';
+    
+    readings.forEach(reading => {
+        const row = document.querySelector(`tr[data-part="${reading.part_name.toLowerCase()}"]`);
+        if (row) {
+            for (const [key, value] of Object.entries(reading)) {
+                const input = row.querySelector(`input[data-f="${key}"]`);
+                if (input && value != null && value !== "" && input.value === "") {
+                    input.value = value;
+                    input.parentElement.classList.add('ai-filled');
+                    
+                    // Update readonly attribute based on current user
+                    if (!isAdmin) {
+                        input.setAttribute('readonly', true);
+                    } else {
+                        input.removeAttribute('readonly');
                     }
-                });
+                }
             }
+        }
+    });
+}
 
             /**
              * Export data to Excel
@@ -1507,7 +1638,19 @@
              * Save data to database
              */
             async function saveToDatabase() {
-                const readings = [];
+             // Check if user is logged in
+                const currentUser = AuthModule.getCurrentUser();
+                if (!currentUser) {
+                    Swal.fire({
+                        ...CONFIG.SWAL_OPTIONS,
+                        title: 'Authentication Required',
+                        text: 'You must be logged in to save data.',
+                        icon: 'warning',
+                        confirmButtonColor: '#DC2626'
+                    });
+                    return;
+                }
+                                const readings = [];
 
                 document.querySelectorAll('.parts-table tbody tr').forEach(tr => {
                     const reading = {
@@ -1536,8 +1679,6 @@
 
                 saveBtn.textContent = "Saving...";
                 saveBtn.disabled = true;
-
-                const currentUser = AuthModule.getCurrentUser();
                 const inspectorName = currentUser ? currentUser.username : 'Anonymous';
 
                 try {
@@ -1600,12 +1741,30 @@
         // ================================================
         // APPLICATION INITIALIZATION
         // ================================================
-        document.addEventListener('DOMContentLoaded', function () {
-            AuthModule.init();
-            SidebarModule.init();
-            DataModule.init();
-            PDFModule.init();
-        });
+   // In your application initialization:
+document.addEventListener('DOMContentLoaded', async function () {
+    await AuthModule.init();  // Wait for auth to complete
+    SidebarModule.init();
+    DataModule.init();
+    PDFModule.init();
+    
+    // Check if we need to re-render any existing table
+    setTimeout(() => {
+        const gridStatusBadge = document.getElementById('grid-status-badge');
+        if (gridStatusBadge) {
+            const currentUser = AuthModule.getCurrentUser();
+            const isAdmin = currentUser && currentUser.role === 'admin';
+            
+            if (isAdmin) {
+                gridStatusBadge.textContent = 'Editable Grid';
+                gridStatusBadge.className = 'badge badge-info';
+            } else {
+                gridStatusBadge.textContent = 'Read-Only View';
+                gridStatusBadge.className = 'badge badge-secondary';
+            }
+        }
+    }, 500);
+});
     </script>
 </body>
 
