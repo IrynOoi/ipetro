@@ -678,85 +678,130 @@ td.read-only-field.bg-orange-200:hover {
             }
         }
 
-        /* ================================================
-           PRINT STYLES
-           ================================================ */
-        @media print {
-            body, html {
-                overflow: visible !important;
-                height: auto !important;
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-            }
 
-            #sidebar, #toggle-sidebar-btn, header, .flex-1 > main, #mobile-overlay, .edit-mode-indicator {
-                display: none !important;
-            }
+     
+/* ================================================
+   PRINT STYLES - FINAL FIX
+   ================================================ */
+@media print {
+    @page {
+        size: A4;
+        margin: 10mm; /* Standard margin */
+    }
 
-            #modal {
-                display: block !important;
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100% !important;
-                height: auto !important;
-                overflow: visible !important;
-                z-index: 9999 !important;
-                background: white !important;
-                padding: 0 !important;
-                opacity: 1 !important;
-                pointer-events: auto !important;
-            }
+    /* 1. Reset Body & Layout */
+    body, html {
+        background-color: white !important;
+        height: auto !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        display: block !important; /* Overrides flex from screen */
+        font-size: 9pt !important; /* Smaller font to fit more */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
 
-            .modal-container {
-                position: relative !important;
-                box-shadow: none !important;
-                max-width: 100% !important;
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                transform: none !important;
-                border: none !important;
-                overflow: visible !important;
-                height: auto !important;
-                max-height: none !important;
-            }
+    /* 2. Hide Non-Print Elements */
+    #sidebar, #toggle-sidebar-btn, header, .flex-1 > main, #mobile-overlay, 
+    .edit-mode-indicator, #modal-header, .modal-overlay, button,
+    #edit-toggle-btn, #ppt-button, #print-button {
+        display: none !important;
+    }
 
-            #modal-print-area {
-                display: block !important;
-                width: 100% !important;
-                height: auto !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                overflow: visible !important;
-            }
+    /* 3. Modal Content Positioning */
+    #modal {
+        display: block !important;
+        position: relative !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        opacity: 1 !important;
+        pointer-events: none;
+        z-index: auto !important;
+        overflow: visible !important;
+    }
 
-            #modal-header, .modal-overlay {
-                display: none !important;
-            }
+    .modal-container {
+        display: block !important;
+        box-shadow: none !important;
+        border: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        transform: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
-            .report-table th, .report-table td, .report-header-table td {
-                border: 1px solid #000 !important;
-                color: #000 !important;
-            }
-            
-            .report-image {
-                max-width: 100% !important;
-                page-break-inside: avoid;
-            }
+    #modal-print-area {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
 
-            [contenteditable] {
-                border: none !important;
-                background: transparent !important;
-            }
+    /* 4. FORCE Table Borders (The Outline Fix) */
+    table, .report-table, .report-header-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border: 2px solid #000 !important; /* Thick outer border */
+        page-break-inside: auto;
+    }
 
-            .editable-notes {
-                border: 1px solid #ccc !important;
-                background: white !important;
-            }
-        }
+    th, td {
+        border: 1px solid #000 !important; /* Thin inner borders */
+        color: #000 !important;
+        padding: 3px 5px !important; /* Tight padding to save vertical space */
+        background-color: transparent !important;
+    }
+
+    thead th {
+        background-color: #f0f0f0 !important; /* Light gray header */
+        border-bottom: 2px solid #000 !important;
+    }
+
+    /* 5. Layout Fixes (Side by Side) */
+    .report-split-container {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 15px !important;
+    }
+
+    .report-right-col {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* 6. Image & Notes Scaling */
+    img.report-image {
+        max-height: 180px !important; /* Reduced height to prevent overflow */
+        width: auto !important;
+        object-fit: contain !important;
+        margin: 0 auto 10px auto !important;
+        page-break-inside: avoid;
+    }
+
+    .editable-notes {
+        border: 1px solid #000 !important;
+        min-height: 80px !important; /* Smaller min-height */
+        color: #000 !important;
+        page-break-inside: avoid;
+        font-size: 9pt !important;
+    }
+
+    /* 7. Fit to Page Hack */
+    #modal-content {
+        zoom: 0.95; /* Scales content down to 95% to ensure it fits on one page */
+    }
+
+    /* Ensure no elements force a page break */
+    tr, td, div, p {
+        page-break-inside: avoid;
+    }
+}
 
         /* Screen Styles for Tables */
         .report-table th, .report-table td, .report-header-table td, .report-header-table {
@@ -1580,28 +1625,26 @@ setTimeout(() => {
         </div>`;
     }
 }
-       function createReportHTML(data, isAdmin = false) {
+      function createReportHTML(data, isAdmin = false) {
     const insp = data.inspection;
     const parts = data.parts;
     const methods = data.methods || [];
     const riskColors = {
         'LOW': 'bg-green-200',
         'MEDIUM': 'bg-yellow-200',
-        'HIGH': 'bg-red-200'
+        'HIGH': 'bg-red-200',
+        'MEDIUM HIGH': 'bg-orange-200'
     };
 
-    // Helper function to create editable attributes
     const editableAttr = isAdmin ? 'data-editable="true"' : '';
     const contentEditableAttr = isAdmin ? 'contenteditable="false"' : '';
-    
-    // Add validation limits for temperature and pressure
     const tempValidation = isAdmin ? 'data-validation="temp" data-min="-50" data-max="500"' : '';
     const pressureValidation = isAdmin ? 'data-validation="pressure" data-min="0" data-max="10"' : '';
 
     let header = `
-        <div class="mb-8 border-b-2 border-gray-800 pb-4">
-            <h1 class="text-3xl font-bold text-center mb-6 text-gray-900 tracking-tight">INSPECTION PLAN (ON-STREAM)</h1>
-            <table class="w-full border-collapse report-header-table text-sm">
+        <div class="mb-6 border-b-2 border-gray-800 pb-2">
+            <h1 class="text-2xl font-bold text-center mb-4 text-gray-900 tracking-tight">INSPECTION PLAN (ON-STREAM)</h1>
+            <table class="w-full border-collapse report-header-table text-sm" width="100%">
                 <tr>
                     <td class="p-2 font-bold bg-gray-100 w-1/6">Description :</td>
                     <td class="p-2" colspan="3"><span ${editableAttr} ${contentEditableAttr}>${insp.equipment_desc || '-'}</span></td>
@@ -1621,9 +1664,9 @@ setTimeout(() => {
     `;
 
     let partsTable = `
-        <div class="mb-6">
-            <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Component Analysis</h3>
-            <table class="w-full border-collapse report-table mb-4 text-xs">
+        <div class="mb-4">
+            <h3 class="text-sm font-bold uppercase mb-1 text-gray-500">Component Analysis</h3>
+            <table class="w-full border-collapse report-table mb-4 text-xs" width="100%">
                 <thead class="bg-gray-100 text-black font-bold">
                     <tr>
                         <th class="p-2" rowspan="2">FLUID</th>
@@ -1650,22 +1693,9 @@ setTimeout(() => {
                             <td class="p-2 text-center"><span ${editableAttr} ${contentEditableAttr}>${p.spec || '-'}</span></td>
                             <td class="p-2 text-center"><span ${editableAttr} ${contentEditableAttr}>${p.grade || '-'}</span></td>
                             <td class="p-2 text-center"><span ${editableAttr} ${contentEditableAttr}>${p.insulation ? (p.insulation.toLowerCase().startsWith('y') ? 'YES' : 'NO') : 'NO'}</span></td>
-                            <td class="p-2 text-right font-mono">
-                                <span ${editableAttr} ${contentEditableAttr} ${tempValidation} 
-                                      data-original-value="${p.operating_temp || p.design_temp || ''}">
-                                    ${p.operating_temp || p.design_temp || '-'}
-                                </span>
-                            </td>
-                            <td class="p-2 text-right font-mono">
-                                <span ${editableAttr} ${contentEditableAttr} ${pressureValidation}
-                                      data-original-value="${p.operating_pressure || p.design_pressure || ''}">
-                                    ${p.operating_pressure || p.design_pressure || '-'}
-                                </span>
-                            </td>
-                         <td class="p-2 text-center font-bold border border-black read-only-field ${riskColors[p.current_risk_rating] || ''}" 
-                        data-risk-rating="${p.current_risk_rating || 'LOW'}">
-                        ${p.current_risk_rating || '-'}
-                        </td>
+                            <td class="p-2 text-right font-mono"><span ${editableAttr} ${contentEditableAttr} ${tempValidation}>${p.operating_temp || p.design_temp || '-'}</span></td>
+                            <td class="p-2 text-right font-mono"><span ${editableAttr} ${contentEditableAttr} ${pressureValidation}>${p.operating_pressure || p.design_pressure || '-'}</span></td>
+                            <td class="p-2 text-center font-bold border border-black read-only-field ${riskColors[p.current_risk_rating] || ''}">${p.current_risk_rating || '-'}</td>
                             <td class="p-2 text-center" style="white-space: pre-wrap;"><span ${editableAttr} ${contentEditableAttr}>${p.corrosion_group || '-'}</span></td>
                         </tr>
                     `).join('')}
@@ -1673,11 +1703,11 @@ setTimeout(() => {
             </table>
         </div>
     `;
-    
+
     let methodsTable = `
-        <div class="w-1/2 pr-4">
-            <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Inspection Strategy</h3>
-            <table class="w-full border-collapse report-table text-xs mb-4">
+        <div class="w-1/2 pr-2">
+            <h3 class="text-sm font-bold uppercase mb-1 text-gray-500">Inspection Strategy</h3>
+            <table class="w-full border-collapse report-table text-xs mb-4" width="100%">
                 <thead class="bg-gray-100 text-black font-bold">
                     <tr>
                         <th class="p-2 text-left">INSPECTION METHOD</th>
@@ -1696,41 +1726,33 @@ setTimeout(() => {
                 </tbody>
             </table>
             
-            <div class="mt-6">
-                <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Inspector Notes</h3>
+            <div class="mt-4">
+                <h3 class="text-sm font-bold uppercase mb-1 text-gray-500">Inspector(Admin) Notes</h3>
                 <div class="editable-notes text-xs" ${editableAttr} ${contentEditableAttr}>
-Click "Enable Edit" above to add your inspection findings, observations, and notes here...
-
-• Document any anomalies found
-• Record measurement readings
-• Note deviations from expected conditions
-• Add recommendations for follow-up actions
+                    Click "Enable Edit" above to add your inspection findings, observations, and notes here...
                 </div>
             </div>
         </div>
     `;
 
     let imageSection = `
-        <div class="w-1/2 pl-4 flex flex-col items-center justify-center border-l border-gray-200">
-            <h3 class="text-sm font-bold uppercase mb-2 text-gray-500 w-full text-left">Equipment Diagram</h3>
-            <div class="border border-gray-300 p-2 bg-white shadow-sm w-full flex justify-center">
-                <img src="${insp.image_url || 'https://placehold.co/600x400/f3f4f6/9ca3af?text=No+Diagram+Available'}" alt="Equipment Diagram" class="report-image object-contain" style="max-height: 300px; max-width: 100%;">
+        <div class="w-1/2 pl-2 flex flex-col items-center justify-start border-l border-gray-200 report-right-col">
+            <h3 class="text-sm font-bold uppercase mb-1 text-gray-500 w-full text-left">Equipment Diagram</h3>
+            <div class="border border-gray-300 p-2 bg-white shadow-sm w-full flex justify-center mb-4">
+                <img src="${insp.image_url || 'https://placehold.co/600x400/f3f4f6/9ca3af?text=No+Diagram+Available'}" alt="Equipment Diagram" class="report-image object-contain">
             </div>
             
-            <div class="mt-6 w-full">
-                <h3 class="text-sm font-bold uppercase mb-2 text-gray-500">Recommendations</h3>
+            <div class="w-full">
+                <h3 class="text-sm font-bold uppercase mb-1 text-gray-500">Recommendations for admin only</h3>
                 <div class="editable-notes text-xs" ${editableAttr} ${contentEditableAttr}>
-Click "Enable Edit" to add recommendations...
-
-• Suggest corrective actions
-• Identify priority items
-• Recommend next inspection date
+                    Click "Enable Edit" to add recommendations...
                 </div>
             </div>
         </div>
     `;
 
-    return `${header}${partsTable}<div class="flex mt-8">${methodsTable}${imageSection}</div>`;
+    // CRITICAL: Ensure 'report-split-container' class is present here
+    return `${header}${partsTable}<div class="flex mt-4 report-split-container">${methodsTable}${imageSection}</div>`;
 }
 
             /**

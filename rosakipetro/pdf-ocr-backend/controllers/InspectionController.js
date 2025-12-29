@@ -146,13 +146,23 @@ exports.getInspectionPlan = async (req, res) => {
     const client = await db.pool.connect();
     
     try {
-        // Get inspection and equipment info
+        // UPDATED QUERY:
+        // 1. Removed 'i.inspected_by' (column does not exist)
+        // 2. Added LEFT JOIN users to get username and full_name using inspector_id
         const inspInfo = await client.query(
             `SELECT 
-                i.inspection_id, i.inspected_at, i.inspected_by, 
-                e.equipment_no, e.equipment_desc, e.pmt_no, e.design_code, e.image_url
+                i.inspection_id, 
+                i.inspected_at, 
+                u.username AS inspected_by,   -- Alias username so frontend works
+                u.full_name,                  -- Get full name for report
+                e.equipment_no, 
+                e.equipment_desc, 
+                e.pmt_no, 
+                e.design_code, 
+                e.image_url
              FROM inspection i
              JOIN equipment e ON i.equipment_id = e.equipment_id
+             LEFT JOIN users u ON i.inspector_id = u.user_id -- Join with users table
              WHERE i.inspection_id = $1`,
             [id]
         );
@@ -188,6 +198,7 @@ exports.getInspectionPlan = async (req, res) => {
     } catch (err) {
         console.error("Database Error:", err);
         res.status(500).json({ 
+            success: false, // Ensure frontend sees this as a failure
             error: { message: "Database fetch failed: " + err.message } 
         });
     } finally {
@@ -409,7 +420,7 @@ exports.extractData = async (req, res) => {
         `;
 
 
-        const apiKey = "";
+        const apiKey = "AIzaSyAKzbJH_onK2aAJtj1aqUESwLmeU-h9Mz0";
         const MODEL_NAME = "gemini-2.5-flash";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
 
