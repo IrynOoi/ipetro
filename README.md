@@ -27,3 +27,10 @@
 
 <img width="1889" height="926" alt="image" src="https://github.com/user-attachments/assets/e3474a30-28c5-4d43-a4cf-74661d763314" />
 
+# ONLY ADMIN HAS PRIVILEGE TO EDIT AND ADD USER
+
+ADD USER
+<img width="479" height="508" alt="image" src="https://github.com/user-attachments/assets/34964f77-5111-49d5-a3e5-b85eda715fd9" />
+
+EDIT INSPECTION PLAN
+<img width="1617" height="877" alt="image" src="https://github.com/user-attachments/assets/54cfb243-930c-4a04-9b24-a48d48df16be" />
