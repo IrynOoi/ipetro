@@ -39,3 +39,9 @@ ADD USER
 EDIT INSPECTION PLAN
 
 <img width="1617" height="877" alt="image" src="https://github.com/user-attachments/assets/54cfb243-930c-4a04-9b24-a48d48df16be" />
+
+
+EDITABLE GRID
+
+<img width="1041" height="345" alt="image" src="https://github.com/user-attachments/assets/a0cf58b7-d6b2-4f75-ab6a-c07cffe4e3d5" />
+
