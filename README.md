@@ -15,4 +15,9 @@
 # INSPECTION PLAN PREVIEW PAGE:
 <img width="1212" height="900" alt="image" src="https://github.com/user-attachments/assets/796f2647-b7c8-47b4-bf3e-85a2bc19c9df" />
 
+# EXPORT POWERPOINT
+
+<img width="1507" height="1037" alt="image" src="https://github.com/user-attachments/assets/88d69c62-81c4-4ffe-a17d-a1b9c2ff4004" />
+
+
 
