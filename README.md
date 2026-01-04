@@ -23,3 +23,7 @@
 # EXPORT PDF
 <img width="610" height="781" alt="image" src="https://github.com/user-attachments/assets/48dd62bb-cfd4-4b20-9101-b30144a185fd" />
 
+# USER MANAGEMENT PAGE
+
+<img width="1889" height="926" alt="image" src="https://github.com/user-attachments/assets/e3474a30-28c5-4d43-a4cf-74661d763314" />
+
