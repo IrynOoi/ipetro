@@ -20,4 +20,6 @@
 <img width="1507" height="1037" alt="image" src="https://github.com/user-attachments/assets/88d69c62-81c4-4ffe-a17d-a1b9c2ff4004" />
 
 
+# EXPORT PDF
+<img width="610" height="781" alt="image" src="https://github.com/user-attachments/assets/48dd62bb-cfd4-4b20-9101-b30144a185fd" />
 
