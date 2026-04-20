@@ -141,49 +141,51 @@ The system is designed to be scalable, secure, and extensible, supporting both o
 
 
 ## OUTPUT :
+# LOGIN MODULE:
+<img width="461" height="267" alt="image" src="https://github.com/user-attachments/assets/206d6294-f846-45d4-8ace-c25cd37435f4" />
 
-# DATA EXTRACTION MODULE:
+# DASHBOARD PAGE:
+<img width="1248" height="609" alt="image" src="https://github.com/user-attachments/assets/3acc1672-7376-4ded-a09c-bac68a08e1d2" />
 
-<img width="1879" height="938" alt="image" src="https://github.com/user-attachments/assets/e8e50aa2-b3cf-485f-8b91-74710bab3f4c" />
+# INSPECTION PIPELINE FOR DATA EXTRACTION:
+<img width="893" height="444" alt="image" src="https://github.com/user-attachments/assets/5890963b-03af-4541-96e5-07ba729f7d65" />
 
-# EXPORT EXCEL:
+# EQUIPMENT MANAGER PAGE:
+<img width="1047" height="519" alt="image" src="https://github.com/user-attachments/assets/72c9e8ad-c185-4a8c-9ed1-8927a8697840" />
 
-<img width="1184" height="357" alt="image" src="https://github.com/user-attachments/assets/ffd89e81-3243-4aa1-b4f1-1883767f2fee" />
+# ADD NEW EQUIPMENT INTERFACE:
+<img width="335" height="464" alt="image" src="https://github.com/user-attachments/assets/40e97bab-1df8-49cd-ace7-4dded0b1898a" />
 
-# EQUIPMENT MANAGER ：
+# INTERFACE OF INSPECTION PLAN HISTORY:
+<img width="1093" height="476" alt="image" src="https://github.com/user-attachments/assets/9e23de94-81c2-4766-af8a-86750a5472a3" />
 
-<img width="1885" height="960" alt="image" src="https://github.com/user-attachments/assets/c6cfe857-dbec-43c3-bb68-586320c7a862" />
+# USER MANAGEMENT INTERFACE:
+<img width="792" height="537" alt="image" src="https://github.com/user-attachments/assets/434ae343-619e-44b5-9886-f4ba2ed27f2b" />
 
-# INSPECTION PLAN PREVIEW PAGE:
-<img width="1212" height="900" alt="image" src="https://github.com/user-attachments/assets/796f2647-b7c8-47b4-bf3e-85a2bc19c9df" />
+# ADD USER INTERFACE:
+<img width="369" height="460" alt="image" src="https://github.com/user-attachments/assets/dbe7f419-e427-422e-a1d9-60ff147b428f" />
 
-# EXPORT POWERPOINT
+#  EDIT MODE OF PREVIEW  INTERFACE:
+<img width="748" height="646" alt="image" src="https://github.com/user-attachments/assets/11445576-4d7a-4d96-b5b9-7b4d672ff434" />
 
-<img width="1507" height="1037" alt="image" src="https://github.com/user-attachments/assets/88d69c62-81c4-4ffe-a17d-a1b9c2ff4004" />
+# MY PROFILE  INTERFACE:
+<img width="742" height="406" alt="image" src="https://github.com/user-attachments/assets/2d676ad4-c1ce-48fd-af38-0905dc2dd7ec" />
 
+# PDF BEING GENERATED:
+<img width="562" height="554" alt="image" src="https://github.com/user-attachments/assets/e6b7a931-765c-457d-bc71-16250bff01b0" />
 
-# EXPORT PDF
-<img width="610" height="781" alt="image" src="https://github.com/user-attachments/assets/48dd62bb-cfd4-4b20-9101-b30144a185fd" />
+# POWERPOINT  GENERATED:
+<img width="747" height="359" alt="image" src="https://github.com/user-attachments/assets/b1411429-8bc3-42ed-9cac-451a3cca2343" />
 
-# USER MANAGEMENT PAGE
+# INSPECTION PLAN  EXCEL  FILE IS GENERATED:
+<img width="1242" height="485" alt="image" src="https://github.com/user-attachments/assets/632e8016-688b-47ef-b7e1-6484b33a60a2" />
 
-<img width="1889" height="926" alt="image" src="https://github.com/user-attachments/assets/e3474a30-28c5-4d43-a4cf-74661d763314" />
+# DASHBOARD FOR SYSTEM ANALYSIS:
+<img width="897" height="472" alt="image" src="https://github.com/user-attachments/assets/9700325a-cc58-4a8d-8181-60792c3e854c" />
 
-# ONLY ADMIN HAS PRIVILEGE TO EDIT AND ADD USER
-
-ADD USER
-
-<img width="479" height="508" alt="image" src="https://github.com/user-attachments/assets/34964f77-5111-49d5-a3e5-b85eda715fd9" />
-
-
-
-
-EDIT INSPECTION PLAN
-
-<img width="1617" height="877" alt="image" src="https://github.com/user-attachments/assets/54cfb243-930c-4a04-9b24-a48d48df16be" />
+# MASTERFILE EXCEL FILE  BEING GENERATED FROM SYSTEM ANALYSIS PAGE:
+<img width="899" height="398" alt="image" src="https://github.com/user-attachments/assets/56da9ced-7227-4246-b3ab-868f4936c6ad" />
 
 
-EDITABLE GRID
 
-<img width="1041" height="345" alt="image" src="https://github.com/user-attachments/assets/a0cf58b7-d6b2-4f75-ab6a-c07cffe4e3d5" />
 
