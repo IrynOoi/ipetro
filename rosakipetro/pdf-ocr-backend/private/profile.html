@@ -13,13 +13,16 @@
 
     <style>
         /* ================================================
-           DESIGN SYSTEM - COLOR VARIABLES
+           DESIGN SYSTEM - UNIFIED
            ================================================ */
         :root {
+            /* Brand Colors */
             --color-primary: #DC2626;
             --color-primary-dark: #B91C1C;
             --color-primary-light: #FEE2E2;
             --color-primary-glow: rgba(220, 38, 38, 0.15);
+
+            /* Neutral Palette */
             --color-slate-50: #F8FAFC;
             --color-slate-100: #F1F5F9;
             --color-slate-200: #E2E8F0;
@@ -30,25 +33,44 @@
             --color-slate-700: #334155;
             --color-slate-800: #1E293B;
             --color-slate-900: #0F172A;
+
+            /* Semantic Colors */
             --color-success: #10B981;
             --color-success-light: #D1FAE5;
             --color-warning: #F59E0B;
             --color-info: #3B82F6;
             --color-info-light: #DBEAFE;
+
+            /* Spacing & Radius */
             --radius-md: 0.5rem;
             --radius-xl: 1rem;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 20px var(--color-primary-glow);
+
+            /* Transitions */
             --transition-base: 150ms cubic-bezier(0.4, 0, 0.2, 1);
             --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Base Styles */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { height: 100%; overflow: hidden; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, var(--color-slate-50) 0%, var(--color-slate-100) 100%);
             color: var(--color-slate-900);
             height: 100%;
@@ -57,35 +79,90 @@
             width: 100%;
         }
 
-        /* Sidebar Styles */
+        /* ================================================
+           CUSTOM SCROLLBAR
+           ================================================ */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--color-slate-100);
+            border-radius: var(--radius-md);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-slate-300);
+            border-radius: var(--radius-md);
+            transition: background var(--transition-base);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-slate-400);
+        }
+
+        /* ================================================
+           SIDEBAR DESIGN
+           ================================================ */
         #sidebar {
+            transition: all var(--transition-smooth);
             background: linear-gradient(180deg, var(--color-slate-900) 0%, var(--color-slate-800) 100%);
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-xl);
+            position: relative;
+            z-index: 50;
+        }
+
+        #sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.1) 20%, rgba(255, 255, 255, 0.1) 80%, transparent 100%);
         }
 
         .sidebar-link {
             display: flex;
             align-items: center;
             padding: 0.75rem 1rem;
-            color: #94A3B8;
+            color: var(--color-slate-400);
             text-decoration: none;
-            border-radius: 0.5rem;
+            border-radius: var(--radius-md);
             margin: 0.25rem 0.75rem;
-            transition: all 0.2s;
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--color-primary);
+            transform: scaleY(0);
+            transition: transform var(--transition-smooth);
         }
 
         .sidebar-link:hover {
             background-color: rgba(255, 255, 255, 0.05);
-            color: #E2E8F0;
+            color: var(--color-slate-200);
             transform: translateX(4px);
         }
 
         .sidebar-link.active {
             background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4), var(--shadow-glow);
             font-weight: 600;
+        }
+
+        .sidebar-link.active::before {
+            transform: scaleY(1);
         }
 
         .sidebar-section-title {
@@ -97,15 +174,34 @@
             letter-spacing: 0.05em;
             color: #64748B;
         }
-        
-        #sidebar.collapsed { width: 80px; }
-        #sidebar.collapsed .sidebar-text, 
-        #sidebar.collapsed .sidebar-section-title, 
-        #sidebar.collapsed .user-info-text, 
-        #sidebar.collapsed .logo-text { display: none; }
-        #sidebar.collapsed .sidebar-link { justify-content: center; padding: 0.875rem 0; margin: 0.25rem 0.5rem; }
 
-        /* Button Styles */
+        #sidebar.collapsed {
+            width: 80px;
+        }
+
+        #sidebar.collapsed .sidebar-text,
+        #sidebar.collapsed .sidebar-section-title,
+        #sidebar.collapsed .user-info-text,
+        #sidebar.collapsed .logo-text {
+            display: none;
+        }
+
+        #sidebar.collapsed .sidebar-link {
+            justify-content: center;
+            padding: 12px 0;
+            margin: 4px 8px;
+        }
+
+        /* ================================================
+           UI COMPONENTS
+           ================================================ */
+        .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--color-slate-200);
+            box-shadow: var(--shadow-sm);
+        }
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -119,14 +215,16 @@
             cursor: pointer;
             transition: all var(--transition-base);
         }
+
         .btn-primary {
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
             color: white;
             box-shadow: var(--shadow-md);
         }
+
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
         }
 
         /* Badge Styles */
@@ -134,25 +232,18 @@
             display: inline-flex;
             align-items: center;
             gap: 0.375rem;
-            padding: 0.375rem 0.75rem;
+            padding: 0.25rem 0.625rem;
             font-size: 0.688rem;
             font-weight: 600;
             border-radius: 9999px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
+
         .badge-success {
             background: var(--color-success-light);
             color: var(--color-success);
-            border: 1px solid var(--color-success);
-        }
-
-        /* Header Styles */
-        .header {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--color-slate-200);
-            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         /* Mobile Overlay */
@@ -164,8 +255,11 @@
             backdrop-filter: blur(4px);
             z-index: 40;
         }
-        #mobile-overlay.active { display: block; }
-        
+
+        #mobile-overlay.active {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             #sidebar {
                 position: fixed;
@@ -176,75 +270,113 @@
                 transform: translateX(-100%);
                 width: 280px;
             }
-            #sidebar.mobile-open { transform: translateX(0); }
+
+            #sidebar.mobile-open {
+                transform: translateX(0);
+            }
         }
     </style>
 </head>
 
-<body class="h-screen flex overflow-hidden">
+<body class="h-screen flex overflow-hidden bg-gray-100">
 
     <!-- Mobile Overlay -->
     <div id="mobile-overlay"></div>
 
     <!-- Mobile Toggle Button -->
     <button id="toggle-sidebar-btn" class="md:hidden fixed top-4 left-4 z-50 bg-slate-900 text-white p-3 rounded-xl shadow-xl hover:bg-slate-800 transition-all">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
     </button>
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="text-white flex flex-col h-full shrink-0 w-64 shadow-xl z-20">
-        <!-- Logo -->
+    <!-- ================================================
+         SIDEBAR NAVIGATION
+         ================================================ -->
+    <aside id="sidebar" class="text-white flex flex-col h-full shrink-0 w-64">
+
+        <!-- Logo Section -->
         <div class="h-20 flex items-center px-6 shrink-0 border-b border-white/10">
             <div class="flex items-center gap-3">
-                <svg width="40" height="40" viewBox="0 0 100 100" fill="none" class="shrink-0 drop-shadow-xl">
-                    <path d="M50 10 L85 30 L85 70 L50 90 L50 10 Z" fill="#DC2626"/>
-                    <path d="M50 10 L15 30 L15 70 L50 90 L50 10 Z" fill="#475569" opacity="0.8"/>
-                </svg>
-                <div class="flex flex-col logo-text">
-                    <span class="font-bold text-xl tracking-tight leading-tight">iPETRO</span>
-                    <span class="text-[10px] font-bold text-red-400 tracking-widest uppercase">Analytics</span>
+                <div class="relative">
+                    <svg width="40" height="40" viewBox="0 0 100 100" fill="none" class="shrink-0 drop-shadow-xl">
+                        <defs>
+                            <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#DC2626;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#B91C1C;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M50 10 L85 30 L85 70 L50 90 L50 10 Z" fill="url(#logo-gradient)" />
+                        <path d="M50 10 L15 30 L15 70 L50 90 L50 10 Z" fill="#475569" opacity="0.8" />
+                        <path d="M50 10 L85 30 L50 50 L15 30 L50 10 Z" fill="#EF4444" />
+                    </svg>
+                    <div class="absolute inset-0 blur-xl opacity-50 bg-red-500"></div>
+                </div>
+                <div class="logo-text flex flex-col">
+                    <span class="font-bold text-xl tracking-tight text-white leading-tight">iPETRO</span>
+                    <span class="text-[10px] font-bold text-red-400 tracking-widest uppercase">RBIMS Core</span>
                 </div>
             </div>
         </div>
 
-        <!-- Nav -->
+        <!-- Navigation Links -->
         <div class="flex-1 overflow-y-auto py-6">
             <nav class="flex flex-col gap-1">
-                <div class="sidebar-section-title">Overview</div>
-                
-                <a href="dashboard.html" class="sidebar-link">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
-                    <span class="sidebar-text ml-3 font-medium text-sm">Dashboard</span>
+                <div class="sidebar-section-title px-6 mb-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    Overview
+                </div>
+
+                <a href="dashboard.html" class="sidebar-link group" data-page="dashboard">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                    </svg>
+                    <span class="sidebar-text font-medium text-sm ml-3">Dashboard</span>
                 </a>
 
-                <div class="sidebar-section-title mt-6">Workspace</div>
+                <div class="sidebar-section-title px-6 mb-3 mt-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    Workspace
+                </div>
 
-                <a href="test.html" class="sidebar-link">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    <span class="sidebar-text ml-3 font-medium text-sm">Inspection Log</span>
-                </a>
-                
-                <a href="equipment.html" class="sidebar-link">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                    <span class="sidebar-text ml-3 font-medium text-sm">Equipment</span>
-                </a>
-
-                <a href="inspectionplan.html" class="sidebar-link">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                    <span class="sidebar-text ml-3 font-medium text-sm">Plans</span>
+                <a href="test.html" class="sidebar-link group" data-page="test">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span class="sidebar-text font-medium text-sm ml-3">Inspection Log</span>
                 </a>
 
-                <!-- Admin Section (Hidden by default) -->
-                <div id="admin-section" class="sidebar-section-title mt-6 hidden">Administration</div>
-                <a href="users.html" id="users-link" class="sidebar-link hidden">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <span class="sidebar-text ml-3 font-medium text-sm">Users</span>
+                <a href="equipment.html" class="sidebar-link group" data-page="equipment">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    <span class="sidebar-text font-medium text-sm ml-3">Equipment</span>
                 </a>
 
-                <div class="sidebar-section-title mt-6">Account</div>
-                <a href="profile.html" class="sidebar-link active">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                    <span class="sidebar-text ml-3 font-medium text-sm">My Profile</span>
+                <a href="inspectionplan.html" class="sidebar-link group" data-page="inspectionplan">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                    <span class="sidebar-text font-medium text-sm ml-3">Plans</span>
+                </a>
+
+                <div id="admin-section" class="sidebar-section-title px-6 mb-3 mt-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest hidden">
+                    Administration
+                </div>
+                <a href="users.html" id="users-link" class="sidebar-link group hidden" data-page="users">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <span class="sidebar-text font-medium text-sm ml-3">Users</span>
+                </a>
+
+                <div class="sidebar-section-title px-6 mb-3 mt-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    Account
+                </div>
+                <a href="profile.html" class="sidebar-link active group" data-page="profile">
+                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <span class="sidebar-text font-medium text-sm ml-3">My Profile</span>
                 </a>
             </nav>
         </div>
@@ -266,22 +398,28 @@
                     </div>
                 </div>
             </div>
-            
-            <button onclick="AuthModule.logout()" class="btn btn-primary w-full shadow-lg flex items-center justify-center gap-2 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+
+            <button onclick="AuthModule.logout()" class="btn btn-primary w-full shadow-lg" style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%); color: white;">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
                 <span class="sidebar-text relative z-10">Logout</span>
             </button>
         </div>
     </aside>
 
-    <!-- Main Content -->
+    <!-- ================================================
+         MAIN CONTENT AREA
+         ================================================ -->
     <div class="flex-1 flex flex-col h-full overflow-hidden relative">
         
         <!-- Header -->
         <header class="header h-20 flex items-center justify-between px-8 shrink-0 z-30">
             <div class="flex items-center gap-4">
                 <button id="desktop-toggle-btn" class="hidden md:flex text-slate-400 hover:text-slate-700 transition-all p-2 rounded-lg hover:bg-slate-100">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                    </svg>
                 </button>
                 <div>
                     <h1 class="text-xl font-bold text-slate-900 tracking-tight">My Profile</h1>
@@ -371,6 +509,41 @@
     <!-- Scripts -->
     <script>
         // ================================================
+        // SIDEBAR MODULE
+        // ================================================
+        const SidebarModule = (function () {
+            function init() {
+                const sidebar = document.getElementById('sidebar');
+                const toggleBtn = document.getElementById('toggle-sidebar-btn');
+                const desktopToggle = document.getElementById('desktop-toggle-btn');
+                const mobileOverlay = document.getElementById('mobile-overlay');
+
+                function toggleSidebar() {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.toggle('mobile-open');
+                        mobileOverlay.classList.toggle('active');
+                    } else {
+                        sidebar.classList.toggle('collapsed');
+                        document.body.classList.toggle('sidebar-collapsed');
+                        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+                    }
+                }
+
+                if(toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
+                if(desktopToggle) desktopToggle.addEventListener('click', toggleSidebar);
+                if(mobileOverlay) mobileOverlay.addEventListener('click', toggleSidebar);
+
+                // Restore state
+                if (window.innerWidth > 768 && localStorage.getItem('sidebarCollapsed') === 'true') {
+                    sidebar.classList.add('collapsed');
+                    document.body.classList.add('sidebar-collapsed');
+                }
+            }
+
+            return { init: init };
+        })();
+
+        // ================================================
         // AUTHENTICATION MODULE
         // ================================================
         const AuthModule = (function() {
@@ -415,6 +588,8 @@
 
             async function logout() {
                 const result = await Swal.fire({
+                    heightAuto: false,
+                    backdrop: true,
                     title: 'Logout?',
                     text: "Are you sure you want to end your session?",
                     icon: 'warning',
@@ -541,29 +716,10 @@
             };
         })();
 
-        // ================================================
-        // SIDEBAR TOGGLE
-        // ================================================
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('mobile-overlay');
-        const toggleBtn = document.getElementById('toggle-sidebar-btn');
-        const desktopToggle = document.getElementById('desktop-toggle-btn'); // Add if you have one in header
-
-        function toggleSidebar() {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.toggle('mobile-open');
-                overlay.classList.toggle('active');
-            } else {
-                sidebar.classList.toggle('collapsed');
-            }
-        }
-
-        if(toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
-        if(overlay) overlay.addEventListener('click', toggleSidebar);
-
         // Init
         document.addEventListener('DOMContentLoaded', () => {
             AuthModule.init();
+            SidebarModule.init();
             ProfileModule.init();
         });
     </script>

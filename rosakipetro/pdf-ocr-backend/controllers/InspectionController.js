@@ -494,6 +494,8 @@ exports.extractData = async (req, res) => {
             7. **Operating Pressure:** (Find "Operating Pressure". If missing, return NULL)
             8. **Operating Temperature:** (Find "Operating Temperature". If missing, return NULL)
 
+            
+
             --- STEP 2: PART DATA (Bill of Materials Table) ---
             Find the "BILL OF MATERIAL" table.
             For EACH part in the "Target Parts List":
