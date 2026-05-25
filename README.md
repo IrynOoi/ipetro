@@ -47,7 +47,6 @@ The backend handles:
 
 - **Database Type:** PostgreSQL (Relational Database)
 - **Schema Definition:** `rr4.sql`
-- **Migration Files:** `add_user_profile_fields.sql`
 
 The database stores structured data for:
 - Users and roles
